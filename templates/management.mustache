@@ -106,7 +106,7 @@
     {{/compcats}}
 </div>
 
-<h2>flavor</h2>
+<h2>{{#str}} flavors, tiny_c4l {{/str}}</h2>
 <div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
     {{#flavor}}
         <div class="col mb-4 item flavor {{name}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
@@ -139,7 +139,7 @@
     {{/flavor}}
 </div>
 
-<h2>component</h2>
+<h2>{{#str}} components, tiny_c4l {{/str}}</h2>
 <div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
     {{#component}}
         <div class="col mb-4 item component {{compcatname}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}" data-flavors="{{#flavorsarr}}{{.}} {{/flavorsarr}}">
@@ -174,7 +174,7 @@
     {{/component}}
 </div>
 
-<h2>variant</h2>
+<h2>{{#str}} variants, tiny_c4l {{/str}}</h2>
 <div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
     {{#variant}}
         <div class="col mb-4 item variant {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
