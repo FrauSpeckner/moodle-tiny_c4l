@@ -36,10 +36,10 @@ class utils {
 
     /**
      * Get all components.
-     *
+     * @param bool $isstudent
      * @return array all components
      */
-    public static function get_all_components(): array {
+    public static function get_all_components(bool $isstudent = false): array {
         global $DB;
         $componentrecords = $DB->get_records('tiny_c4l_component', null, 'displayorder');
         $components = [];
@@ -63,10 +63,10 @@ class utils {
 
     /**
      * Get all variants.
-     *
+     * @param bool $isstudent
      * @return array all variants
      */
-    public static function get_all_variants(): array {
+    public static function get_all_variants(bool $isstudent = false): array {
         global $DB;
         $variants = $DB->get_records('tiny_c4l_variant');
         foreach ($variants as $variant) {
@@ -77,10 +77,10 @@ class utils {
 
     /**
      * Get all component categories.
-     *
+     * @param bool $isstudent
      * @return array all component categories
      */
-    public static function get_all_compcats(): array {
+    public static function get_all_compcats(bool $isstudent = false): array {
         global $DB;
         $categories = $DB->get_records('tiny_c4l_compcat', null, 'displayorder');
         return array_values($categories);
@@ -88,10 +88,10 @@ class utils {
 
     /**
      * Get all component flavors.
-     *
+     * @param bool $isstudent
      * @return array all component flavors
      */
-    public static function get_all_comp_flavors(): array {
+    public static function get_all_comp_flavors(bool $isstudent = false): array {
         global $DB;
         $compflavors = $DB->get_records('tiny_c4l_comp_flavor', null, '', 'id, componentname, flavorname');
         $components = [];
@@ -103,10 +103,10 @@ class utils {
 
     /**
      * Get all flavors.
-     *
+     * @param bool $isstudent
      * @return array all flavors
      */
-    public static function get_all_flavors(): array {
+    public static function get_all_flavors(bool $isstudent = false): array {
         global $DB;
         $flavors = $DB->get_records('tiny_c4l_flavor');
         $flavorsbyname = [];
@@ -120,15 +120,15 @@ class utils {
 
     /**
      * Get all data for the c4l editor.
-     *
+     * @param bool $isstudent
      * @return array all data for the c4l editor
      */
-    public static function get_c4l_data(): array {
-        $components = self::get_all_components();
-        $compcats = self::get_all_compcats();
-        $flavors = self::get_all_flavors();
-        $variants = self::get_all_variants();
-        $componentflavors = self::get_all_comp_flavors();
+    public static function get_c4l_data(bool $isstudent = false): array {
+        $components = self::get_all_components($isstudent);
+        $compcats = self::get_all_compcats($isstudent);
+        $flavors = self::get_all_flavors($isstudent);
+        $variants = self::get_all_variants($isstudent);
+        $componentflavors = self::get_all_comp_flavors($isstudent);
 
         foreach ($components as $key => $component) {
             $components[$key]['flavors'] = $componentflavors[$component['name']] ?? [];

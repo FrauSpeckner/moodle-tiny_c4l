@@ -25,18 +25,12 @@ import {getPluginOptionName} from 'editor_tiny/options';
 import {pluginName} from './common';
 
 const isstudentName = getPluginOptionName(pluginName, 'isstudent');
-const allowedcompsName = getPluginOptionName(pluginName, 'allowedcomps');
 const showpreviewName = getPluginOptionName(pluginName, 'showpreview');
 const viewc4lName = getPluginOptionName(pluginName, 'viewc4l');
 const cssUrlName = getPluginOptionName(pluginName, 'cssurl');
 
 export const register = (editor) => {
     const registerOption = editor.options.register;
-
-    registerOption(allowedcompsName, {
-        processor: 'array',
-        "default": [],
-    });
 
     registerOption(isstudentName, {
         processor: 'boolean',
@@ -82,14 +76,6 @@ export const isStudent = (editor) => editor.options.get(isstudentName);
  * @returns {object}
  */
 export const showPreview = (editor) => editor.options.get(showpreviewName);
-
-/**
- * Get components allowed at students configuration for the Tiny C4L plugin.
- *
- * @param {TinyMCE} editor
- * @returns {object}
- */
-export const getallowedComponents = (editor) => editor.options.get(allowedcompsName);
 
 /**
  * Get the css url for the Tiny C4L plugin (to be used in the editor).

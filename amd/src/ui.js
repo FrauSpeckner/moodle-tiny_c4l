@@ -27,7 +27,6 @@ import ModalFactory from 'core/modal_factory';
 import {get_strings as getStrings} from 'core/str';
 import {
     isStudent,
-    getallowedComponents,
     showPreview
 } from './options';
 import ModalEvents from 'core/modal_events';
@@ -54,11 +53,7 @@ import {
 } from './preferencelib';
 import {call as fetchMany} from 'core/ajax';
 
-// Will be reimplemented in the future.
-// eslint-disable-next-line no-unused-vars
 let userStudent = false;
-// eslint-disable-next-line no-unused-vars
-let allowedComponents = [];
 
 let previewC4L = true;
 let components = [];
@@ -66,6 +61,7 @@ let categories = [];
 let flavors = [];
 let variants = [];
 let langStrings = {};
+let contextid = 1;
 
 let currentFlavor = '';
 let currentFlavorId = 0;
@@ -78,6 +74,7 @@ let lastFlavor = [];
  * @param {TinyMCE} editor
  */
 export const handleAction = async(editor) => {
+    userStudent = isStudent(editor);
     let data = await getC4LData();
     components = data.components;
     categories = data.categories;
@@ -86,10 +83,8 @@ export const handleAction = async(editor) => {
     setComponents(components);
     setVariants(variants);
     setFlavors(flavors);
-    userStudent = isStudent(editor);
     previewC4L = showPreview(editor);
     langStrings = await getAllStrings();
-    allowedComponents = getallowedComponents(editor);
     currentCategoryId = await loadPreferences(Preferences.category);
     lastFlavor = await loadPreferences(Preferences.category_flavors);
     if (lastFlavor === null) {
@@ -529,7 +524,10 @@ const getButtons = async(editor) => {
 const getC4LData = async() => {
     const data = await fetchMany([{
         methodname: 'tiny_c4l_get_c4l_data',
-        args: {},
+        args: {
+            isstudent: userStudent,
+            contextid: contextid
+        },
     }])[0];
 
     // TODO error handling

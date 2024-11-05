@@ -37,8 +37,10 @@ class get_c4l_data extends external_api {
      * @return external_function_parameters
      */
     public static function execute_parameters(): external_function_parameters {
-        // TODO Refactor to accept the contextid of the tiny editor
-        return new external_function_parameters([]);
+        return new external_function_parameters([
+            'contextid' => new external_value(PARAM_INT, 'Context id', VALUE_REQUIRED),
+            'isstudent' => new external_value(PARAM_BOOL, 'Only return components for students', VALUE_REQUIRED),
+        ]);
     }
 
     /**
@@ -46,14 +48,18 @@ class get_c4l_data extends external_api {
      *
      * @return array associative array containing the aggregated information for all c4l data.
      */
-    public static function execute(): array {
+    public static function execute(int $contextid, bool $isstudent): array {
         // We usually need to call validate_parameters, but we do not have any (yet).
-        $context = \context_system::instance();
+        self::validate_parameters(self::execute_parameters(), [
+            'contextid' => $contextid,
+            'isstudent' => $isstudent
+        ]);
+        $context = \core\context::instance_by_id($contextid);
         self::validate_context($context);
-        // TODO Readd capability check based on the context id which should be submitted
-        // require_capability('tiny/c4l:viewplugin', $context);
 
-        return \tiny_c4l\local\utils::get_c4l_data();
+        require_capability('tiny/c4l:viewplugin', $context);
+
+        return \tiny_c4l\local\utils::get_c4l_data($isstudent);
     }
 
     /**

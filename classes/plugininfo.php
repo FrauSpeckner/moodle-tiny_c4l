@@ -73,12 +73,6 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_conf
         $viewc4l = has_capability('tiny/c4l:viewplugin', $context);
         $showpreview = get_config('tiny_c4l', 'enablepreview');
         $isstudent = !has_capability('gradereport/grader:view', $context);
-        $allowedcomps = [];
-        if ($isstudent) {
-            $aimedcomps = explode(',', get_config('tiny_c4l', 'aimedatstudents'));
-            $notintendedcomps = explode(',', get_config('tiny_c4l', 'notintendedforstudents'));
-            $allowedcomps = array_merge($aimedcomps, $notintendedcomps);
-        }
 
         $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
         $rev = $cache->get(utils::TINY_C4L_CSS_CACHE_REV);
@@ -96,7 +90,6 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_conf
 
         return [
             'isstudent' => $isstudent,
-            'allowedcomps' => $allowedcomps,
             'showpreview' => ($showpreview == '1'),
             'viewc4l' => $viewc4l,
             'cssurl' => $cssurl,
