@@ -132,6 +132,11 @@ const displayDialogue = async(editor) => {
         });
     });
 
+    const selectfilter = modal.getRoot()[0].querySelector('.c4l-select-filter');
+    selectfilter.addEventListener('change', (event) => {
+        handleSelectFilterChange(event, modal);
+    });
+
     // Event flavor selector listener.
     const flavorbuttons = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor');
     flavorbuttons.forEach(node => {
@@ -198,6 +203,13 @@ const handleButtonFilterClick = (event, modal) => {
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
 
+    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
+};
+
+const handleSelectFilterChange = (event, modal) => {
+    currentCategoryId = event.target.value;
+    showFlavors(modal, currentCategoryId);
+    showCategoryButtons(modal, currentCategoryId);
     clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
 };
 

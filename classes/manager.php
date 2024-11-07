@@ -37,6 +37,8 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+    /** @var int $contextid */
+    protected int $contextid = 1;
     /** @var array All tables to export data from. **/
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',
@@ -48,6 +50,15 @@ class manager {
 
     /** @var string Item. **/
     protected static $item = 'row';
+
+    /**
+     * Constructor.
+     *
+     * @param int $contextid
+     */
+    public function __construct(int $contextid = SYSCONTEXTID) {
+        $this->contextid = $contextid;
+    }
 
     /**
      * Export.
@@ -64,13 +75,13 @@ class manager {
         // It is necessary to get the files for each compcat separately to avoid mixing up files from
         // different categories.
         foreach ($compcats as $compcat) {
-            $files = $fs->get_area_files(SYSCONTEXTID, 'tiny_c4l', 'images', $compcat->id);
+            $files = $fs->get_area_files($this->contextid, 'tiny_c4l', 'images', $compcat->id);
             foreach ($files as $file) {
                 $exportfiles[$compcat->name . '/' . $file->get_filepath() . $file->get_filename()] = $file;
             }
         }
         $filerecord = [
-            'contextid' => SYSCONTEXTID,
+            'contextid' => $this->contextid,
             'component' => 'tiny_c4l',
             'filearea' => 'export',
             'itemid' => time(),
@@ -80,7 +91,7 @@ class manager {
         $exportxmlfile = $fs->create_file_from_string($filerecord, $this->exportxml());
         $exportfiles['tiny_c4l_export.xml'] = $exportxmlfile;
         $filename = 'tiny_c4l_export_' . time() . '.zip';
-        $exportfile = $fp->archive_to_storage($exportfiles, SYSCONTEXTID, 'tiny_c4l', 'export', 0, '/', $filename);
+        $exportfile = $fp->archive_to_storage($exportfiles, $this->contextid, 'tiny_c4l', 'export', 0, '/', $filename);
         if (!$exportfile) {
             throw new moodle_exception(get_string('error_export', 'tiny_c4l'));
         }
@@ -147,13 +158,13 @@ class manager {
                 continue;
             }
             $newfilepath = ($categoryname ? str_replace('/' . $categoryname, '', $file->get_filepath()) : $file->get_filepath());
-            if ($oldfile = $fs->get_file(SYSCONTEXTID, 'tiny_c4l', 'images', $categoryid, $newfilepath, $file->get_filename())) {
+            if ($oldfile = $fs->get_file($this->contextid, 'tiny_c4l', 'images', $categoryid, $newfilepath, $file->get_filename())) {
                 if ($oldfile->get_contenthash() != $file->get_contenthash()) {
                     $oldfile->replace_file_with($file);
                 }
             } else {
                 $newfile = $fs->create_file_from_storedfile([
-                    'contextid' => SYSCONTEXTID,
+                    'contextid' => $this->contextid,
                     'component' => 'tiny_c4l',
                     'filearea' => 'images',
                     'itemid' => $categoryid,
