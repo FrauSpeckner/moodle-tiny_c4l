@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
         [
                 'hook' => \core\hook\output\before_http_headers::class,
-                'callback' => \tiny_c4l\local\hook_callbacks::class . '::add_c4l_stylesheet_to_dom',
+                'callback' => \tiny_c4l\local\hook_callbacks::class . '::add_c4l_data_to_dom',
         ],
 ];

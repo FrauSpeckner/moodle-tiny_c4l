@@ -28,11 +28,17 @@ class utils {
     /** @var string TINY_C4L_CACHE_AREA the cache area for the tiny_c4l plugin */
     public const TINY_C4L_CACHE_AREA = 'tiny_c4l_css';
 
+    /** @var string TINY_C4L_JS_CACHE_KEY the cache key for the js code */
+    public const TINY_C4L_JS_CACHE_KEY = 'tiny_c4l_js';
+
     /** @var string TINY_C4L_CSS_CACHE_KEY the cache key for the css code */
     public const TINY_C4L_CSS_CACHE_KEY = 'css';
 
     /** @var string TINY_C4L_CSS_CACHE_REV the cache key for the css revision */
     public const TINY_C4L_CSS_CACHE_REV = 'cssrev';
+
+    /** @var string TINY_C4L_JS_CACHE_REV the cache key for the js revision */
+    public const TINY_C4L_JS_CACHE_REV = 'jsrev';
 
     /**
      * Get all components.
@@ -163,10 +169,18 @@ class utils {
         $iconcssentries = [];
         $componentcssentries = [];
         $variantscssentries = [];
-        $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl');
-        $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
-        $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
-        $variants = $DB->get_records('tiny_c4l_variant', null, '', 'name, iconurl, css');
+        $components = [];
+        $variants = [];
+        try {
+            $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl');
+            $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
+            $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
+            $variants = $DB->get_records('tiny_c4l_variant', null, '', 'name, iconurl, css');
+        } catch (\dml_exception $e) {
+            // This is done to prevent the plugin from crashing the whole site if the database tables
+            // are not yet installed for some reason.
+            return 0;
+        }
         foreach ($variants as $variant) {
             $variantscssentries[] = $variant->css;
             if (empty($variant->iconurl)) {
@@ -203,11 +217,47 @@ class utils {
     }
 
     /**
+     * Rebuild the js cache.
+     * @return int the new revision for the cache
+     */
+    public static function rebuild_js_cache(): int {
+        global $DB;
+        $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        $jsentries = [];
+        try {
+            $jsentries = $DB->get_records_menu('tiny_c4l_component', null, '', 'id, js');
+        } catch (\dml_exception $e) {
+            // This is done to prevent the plugin from crashing the whole site if the database tables
+            // are not yet installed for some reason.
+            return 0;
+        }
+        $js = array_reduce(
+            $jsentries,
+            fn($current, $add) => $current . PHP_EOL . $add,
+            '/* This file contains the javascript for the tiny_c4l plugin.*/'
+        );
+        $js = self::replace_pluginfile_urls($js, true);
+        $cache->set(self::TINY_C4L_JS_CACHE_KEY, $js);
+        $clock = \core\di::get(\core\clock::class);
+        $rev = $clock->time();
+        $cache->set(self::TINY_C4L_JS_CACHE_REV, $rev);
+        return $rev;
+    }
+
+    /**
      * Purge the tiny_c4l css cache.
      */
     public static function purge_css_cache(): void {
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
-        $cache->purge();
+        $cache->delete(self::TINY_C4L_CSS_CACHE_KEY);
+    }
+
+    /**
+     * Purge the tiny_c4l js cache.
+     */
+    public static function purge_js_cache(): void {
+        $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        $cache->delete(self::TINY_C4L_JS_CACHE_KEY);
     }
 
     /**
@@ -218,6 +268,16 @@ class utils {
     public static function get_css_from_cache(): string|false {
         $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
         return $cache->get(self::TINY_C4L_CSS_CACHE_KEY);
+    }
+
+    /**
+     * Helper function to retrieve the currently cached tiny_c4l js.
+     *
+     * @return string|false the js code as string, false if no cache entry found
+     */
+    public static function get_js_from_cache(): string|false {
+        $cache = \cache::make('tiny_c4l', self::TINY_C4L_CACHE_AREA);
+        return $cache->get(self::TINY_C4L_JS_CACHE_KEY);
     }
 
     /**

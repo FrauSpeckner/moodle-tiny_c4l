@@ -39,7 +39,9 @@ class provider implements
      * @return  collection     A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection): collection {
+        $collection->add_user_preference('c4l_category', 'privacy:preference:category');
         $collection->add_user_preference('c4l_components_variants', 'privacy:preference:components_variants');
+        $collection->add_user_preference('c4l_components_flavors', 'privacy:preference:components_flavors');
 
         return $collection;
     }
@@ -59,6 +61,26 @@ class provider implements
                 'c4l_components_variants',
                 $variants,
                 get_string('privacy:preference:components_variants', 'tiny_c4l')
+            );
+        }
+
+        $flavors = get_user_preferences('c4l_components_flavors', null, $userid);
+        if ($flavors !== null) {
+            writer::export_user_preference(
+                'tiny_c4l',
+                'c4l_components_flavors',
+                $flavors,
+                get_string('privacy:preference:components_flavors', 'tiny_c4l')
+            );
+        }
+
+        $category = get_user_preferences('c4l_category', null, $userid);
+        if ($category !== null) {
+            writer::export_user_preference(
+                'tiny_c4l',
+                'c4l_category',
+                $category,
+                get_string('privacy:preference:category', 'tiny_c4l')
             );
         }
     }

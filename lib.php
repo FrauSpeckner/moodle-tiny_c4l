@@ -87,6 +87,13 @@ function tiny_c4l_pluginfile(
             return false;
         }
         send_stored_file($file, 0, 0, $forcedownload, $options);
+    } else if ($filearea === 'js') {
+        $js = utils::get_js_from_cache();
+        if (!$js) {
+            return send_file_not_found();
+        }
+        send_file($js, 'tiny_c4l_scripts.js', null, 0, true, false, 'text/javascript');
+        return true;
     }
     $css = utils::get_css_from_cache();
     if (!$css) {

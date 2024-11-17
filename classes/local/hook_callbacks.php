@@ -30,11 +30,11 @@ class hook_callbacks {
     /**
      * Hook callback function for the before_http_headers hook.
      *
-     * Used to add our custom stylesheet to the DOM.
+     * Used to add our custom stylesheet and js to the DOM.
      *
      * @param before_http_headers $beforehttpheadershook
      */
-    public static function add_c4l_stylesheet_to_dom(\core\hook\output\before_http_headers $beforehttpheadershook): void {
+    public static function add_c4l_data_to_dom(\core\hook\output\before_http_headers $beforehttpheadershook): void {
         // Parameter to disable css delivery.
         if (optional_param('tiny_c4l_disable', false, PARAM_BOOL)) {
             return;
@@ -58,11 +58,25 @@ class hook_callbacks {
         $pluginfileurl = \moodle_url::make_pluginfile_url(
             SYSCONTEXTID,
             'tiny_c4l',
-            '',
+            'css',
             null,
-            '',
+            '/',
             'tiny_c4l_styles.css?rev=' . $rev
         );
         $beforehttpheadershook->renderer->get_page()->requires->css($pluginfileurl);
+
+        $revjs = $cache->get(utils::TINY_C4L_JS_CACHE_REV);
+        if (!$revjs) {
+            $revjs = utils::rebuild_js_cache();
+        }
+        $pluginfileurljs = \moodle_url::make_pluginfile_url(
+            SYSCONTEXTID,
+            'tiny_c4l',
+            'js',
+            null,
+            '/',
+            'tiny_c4l_scripts.js?rev=' . $revjs
+        );
+        $beforehttpheadershook->renderer->get_page()->requires->js($pluginfileurljs);
     }
 }
