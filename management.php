@@ -30,6 +30,7 @@ $url = new moodle_url('/lib/editor/tiny/plugins/c4l/management.php', []);
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
 $PAGE->set_heading(get_string('menuitem_c4l', 'tiny_c4l') . ' ' . get_string('management', 'tiny_c4l'));
+$compcatactive = optional_param('compcat', '', PARAM_ALPHANUMEXT);
 
 require_capability('tiny/c4l:manage', context_system::instance());
 
@@ -89,7 +90,10 @@ array_push($variant, $addentry);
 
 // Add exportlink.
 $exportlink = \moodle_url::make_pluginfile_url(SYSCONTEXTID, 'tiny_c4l', 'export', null, '/', 'tiny_c4l_export.xml')->out();
-$PAGE->requires->js_call_amd('tiny_c4l/management', 'init');
+
+$params = new \stdClass;
+$params->compcatactive = $compcatactive;
+$PAGE->requires->js_call_amd('tiny_c4l/management', 'init', [$params]);
 echo($OUTPUT->render_from_template('tiny_c4l/management', [
     'compcats' => $compcats,
     'flavor' => $flavor,

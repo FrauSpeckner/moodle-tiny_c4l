@@ -121,13 +121,4 @@ class management_comp_flavor_form extends dynamic_form {
 
         $this->set_data($data);
     }
-
-    /**
-     * Returns url to set in $PAGE->set_url() when form is being rendered or submitted via AJAX
-     *
-     * @return moodle_url
-     */
-    protected function get_page_url_for_dynamic_submission(): \moodle_url {
-        return new \moodle_url('/lib/editor/tiny/plugins/c4l/management.php');
-    }
 }

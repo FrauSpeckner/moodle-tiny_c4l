@@ -2,11 +2,9 @@ import ModalForm from 'core_form/modalform';
 import { get_string as getString } from 'core/str';
 import { exception as displayException, deleteCancelPromise } from 'core/notification';
 import { call as fetchMany } from 'core/ajax';
-import LocalStorage from 'core/localstorage';
 
-const storageKey = ('currentC4lcompcat');
 
-export const init = async() => {
+export const init = async(params) => {
 
     // Add listener for adding a new source.
     let addsources = document.getElementsByClassName('add');
@@ -63,13 +61,11 @@ export const init = async() => {
         });
     });
 
-    // Check for active compcat.
-    let activeCompcat = LocalStorage.get(storageKey);
-    if (activeCompcat) {
-        let compcat = document.querySelector('.compcat[data-compcat="' + activeCompcat + '"]');
+    // After submitting a new item, reset active compcat.
+    if (params.compcatactive) {
+        let compcat = document.querySelector('.compcat[data-compcat="' + params.compcatactive + '"]');
         if (compcat) {
-            // Show items and set active.
-            showItems(false, activeCompcat);
+            showItems(false, params.compcatactive);
             compcat.classList.add('active');
         }
     }
@@ -98,8 +94,8 @@ function showModal(e, id, table) {
         },
         modalConfig: { title: title },
     });
-    // Reload page after submit.
-    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
+    // Conditional reload page after submit.
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => reloadIfNew(modalForm.getFormNode()));
 
     modalForm.show();
 }
@@ -139,8 +135,6 @@ function compflavorModal(e) {
         args: {},
         modalConfig: { title: title },
     });
-    // Reload page after submit.
-    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => location.reload());
 
     modalForm.show();
 }
@@ -238,7 +232,7 @@ function showItems(e, compcat) {
         element.classList.remove('hidden');
     });
 
-    // Unmark all and mark clicked compcat, and save in local storage.
+    // Unmark all and mark clicked compcat.
     if (e) {
         let items = document.getElementsByClassName('compcat');
         items.forEach(element => {
@@ -246,6 +240,20 @@ function showItems(e, compcat) {
         });
         let item = e.target.closest('.compcat');
         item.classList.add('active');
-        LocalStorage.set(storageKey, item.dataset.compcat);
+    }
+}
+
+/**
+ * Reload for new items.
+ * @param {*} form
+ */
+function reloadIfNew(form) {
+    // Newly created element?
+    if (!form.elements['id'].value) {
+        // Reload page with active compcat.
+        const compcat = document.querySelector('.compcat.active');
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('compcat', compcat.dataset.compcat);
+        window.location.href = currentUrl.toString();
     }
 }

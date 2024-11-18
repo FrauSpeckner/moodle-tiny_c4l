@@ -246,7 +246,6 @@ abstract class base_form extends dynamic_form {
                 'format' => 92,
             ];
         }
-        
         if ($codeel && $codeel->_type == 'editor') {
             $formdata->code = [
                 'text' => $formdata->code,
