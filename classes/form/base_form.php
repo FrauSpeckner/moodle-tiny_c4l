@@ -147,6 +147,11 @@ abstract class base_form extends dynamic_form {
             \tiny_c4l\local\utils::purge_css_cache();
         }
 
+        // Purge JS to show new one.
+        if (($newrecord && !empty($formdata->js)) || ($oldrecord->js != $formdata->js)) {
+            \tiny_c4l\local\utils::purge_js_cache();
+        }
+
         return [
             'update' => $result,
         ];

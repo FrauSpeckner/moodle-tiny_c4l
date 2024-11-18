@@ -136,11 +136,10 @@ export const getVariantsHtml = (component) => {
     let variantObj = {};
 
     let componentObj = findByName(COMPONENTS, component);
-
     componentObj.variants.forEach(variant => {
         variantObj = findByName(VARIANTS, variant);
         if (variantObj != undefined) {
-            variantsHtml += variantObj.html;
+            variantsHtml += variantObj.content;
         }
     });
 
