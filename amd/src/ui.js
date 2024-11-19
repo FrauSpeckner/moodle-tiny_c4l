@@ -90,11 +90,11 @@ export const handleAction = async(editor) => {
     if (lastFlavor === null) {
         lastFlavor = [];
     }
-    let component_variants = await loadPreferences(Preferences.component_variants);
-    if (component_variants === null) {
-        component_variants = {};
+    let componentVariants = await loadPreferences(Preferences.component_variants);
+    if (componentVariants === null) {
+        componentVariants = {};
     }
-    loadVariantPreferences(component_variants);
+    loadVariantPreferences(componentVariants);
     displayDialogue(editor);
 };
 

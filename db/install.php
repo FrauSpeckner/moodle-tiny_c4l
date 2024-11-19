@@ -32,7 +32,7 @@ use tiny_c4l\manager;
  * @return bool
  */
 function xmldb_tiny_c4l_install() {
-    $basezip = __DIR__ . 'base.zip';
+    $basezip = __DIR__ . '/base.zip';
     $manager = new manager();
     $manager->import($basezip);
     return true;
