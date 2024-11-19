@@ -32,24 +32,8 @@ use tiny_c4l\manager;
  * @return bool
  */
 function xmldb_tiny_c4l_install() {
-    global $DB;
     $basezip = __DIR__ . 'base.zip';
-    if (file_exists($basezip)) {
-        $fs = get_file_storage();
-        $fp = get_file_packer('application/zip');
-        $fp->extract_to_storage($basezip, SYSCONTEXTID, 'tiny_c4l', 'import', 0, '/');
-        $manager = new manager();
-        $xmlfile = $fs->get_file(SYSCONTEXTID, 'tiny_c4l', 'import', 0, '/', 'tiny_c4l_export.xml');
-        $xmlcontent = $xmlfile->get_content();
-        $manager->importxml($xmlcontent);
-        $categories = $DB->get_records('tiny_c4l_compcat');
-        foreach ($categories as $category) {
-            $categoryfiles = $fs->get_directory_files(SYSCONTEXTID, 'tiny_c4l', 'import', 0, '/' . $category->name . '/', true, false);
-            $manager->importfiles($categoryfiles, $category->id, $category->name);
-        }
-        $fs->delete_area_files(SYSCONTEXTID, 'tiny_c4l', 'import', 0);
-
-        \tiny_c4l\local\utils::purge_css_cache();
-    }
+    $manager = new manager();
+    $manager->import($basezip);
     return true;
 }

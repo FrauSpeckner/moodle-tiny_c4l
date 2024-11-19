@@ -58,7 +58,6 @@ function xmldb_tiny_c4l_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-
         // Define table tiny_c4l_component to be created.
         $table = new xmldb_table('tiny_c4l_component');
 

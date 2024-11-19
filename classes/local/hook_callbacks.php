@@ -43,7 +43,7 @@ class hook_callbacks {
         if (during_initial_install()) {
             return;
         }
-        // Only run if plugin is enabled.        
+        // Only run if plugin is enabled.
         $pluginmanager = \core_plugin_manager::instance();
         $plugins = $pluginmanager->get_enabled_plugins('tiny');
         if (!in_array('c4l', $plugins)) {

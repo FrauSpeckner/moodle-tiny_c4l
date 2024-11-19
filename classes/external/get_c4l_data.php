@@ -52,7 +52,7 @@ class get_c4l_data extends external_api {
         // We usually need to call validate_parameters, but we do not have any (yet).
         self::validate_parameters(self::execute_parameters(), [
             'contextid' => $contextid,
-            'isstudent' => $isstudent
+            'isstudent' => $isstudent,
         ]);
         $context = \core\context::instance_by_id($contextid);
         self::validate_context($context);

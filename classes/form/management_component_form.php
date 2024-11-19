@@ -44,7 +44,7 @@ class management_component_form extends base_form {
         $mform->addHelpButton('name', 'componentname', 'tiny_c4l');
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addRule('name', get_string('validclassname', 'tiny_c4l'), 'regex', '/^[_a-zA-Z][_a-zA-Z0-9-]*$/', 'client');
-        
+
         $mform->addElement('text', 'displayname', get_string('displayname', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('displayname', PARAM_TEXT);
         $mform->addHelpButton('displayname', 'displayname', 'tiny_c4l');

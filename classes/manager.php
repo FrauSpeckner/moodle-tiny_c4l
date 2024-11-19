@@ -56,7 +56,7 @@ class manager {
      *
      * @param int $contextid
      */
-    public function __construct(int $contextid = SYSCONTEXTID) {
+    public function __construct(int $contextid = $this->contextid) {
         $this->contextid = $contextid;
     }
 
@@ -228,8 +228,8 @@ class manager {
             self::import_variant($variant, $componentmap);
         }
 
-        foreach ($data['tiny_c4l_comp_flavor'] as $component_flavor) {
-            self::import_component_flavor($component_flavor, $componentmap);
+        foreach ($data['tiny_c4l_comp_flavor'] as $componentflavor) {
+            self::import_component_flavor($componentflavor, $componentmap);
         }
 
         return true;
@@ -401,8 +401,36 @@ class manager {
     public static function delete_compcat(int $id): void {
         global $DB;
         $fs = get_file_storage();
-        $fs->delete_area_files(SYSCONTEXTID, 'tiny_c4l', 'images', $id);
+        $fs->delete_area_files($this->contextid, 'tiny_c4l', 'images', $id);
         $DB->delete_records('tiny_c4l_compcat', ['id' => $id]);
         $DB->delete_records('tiny_c4l_component', ['compcat' => $id]);
+    }
+
+    /**
+     * Import data from a zip file.
+     *
+     * @param stored_file|string $zip
+     * @param int $draftitemid
+     */
+    public function import(stored_file|string $zip, $draftitemid = 0) {
+        global $DB;
+
+        if (file_exists($zip)) {
+            $fs = get_file_storage();
+            $fp = get_file_packer('application/zip');
+            $fp->extract_to_storage($zip, $this->contextid, 'tiny_c4l', 'import', $draftitemid, '/');
+            $manager = new manager();
+            $xmlfile = $fs->get_file($this->contextid, 'tiny_c4l', 'import', $draftitemid, '/', 'tiny_c4l_export.xml');
+            $xmlcontent = $xmlfile->get_content();
+            $manager->importxml($xmlcontent);
+            $categories = $DB->get_records('tiny_c4l_compcat');
+            foreach ($categories as $category) {
+                $categoryfiles = $fs->get_directory_files($this->contextid, 'tiny_c4l', 'import', $draftitemid, '/' . $category->name . '/', true, false);
+                $manager->importfiles($categoryfiles, $category->id, $category->name);
+            }
+            $fs->delete_area_files($this->contextid, 'tiny_c4l', 'import', $draftitemid);
+
+            \tiny_c4l\local\utils::purge_css_cache();
+        }
     }
 }
