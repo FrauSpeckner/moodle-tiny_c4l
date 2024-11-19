@@ -83,7 +83,10 @@
 <h2>{{#str}} compcat, tiny_c4l {{/str}}</h2>
 <div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
     {{#compcats}}
-        <div class="col mb-4 item compcat" data-compcat="{{name}}">
+        <div 
+            class="col mb-4 item compcat" data-compcat="{{name}}"
+            data-loneflavors="{{loneflavors}}" data-lonevariants="{{lonevariants}}" data-lonecomponents="{{lonecomponents}}"
+        >
             <div class="card h-100">
             <div class="card-body">
                 {{#id}}
@@ -177,7 +180,8 @@
 <h2>{{#str}} variants, tiny_c4l {{/str}}</h2>
 <div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
     {{#variant}}
-        <div class="col mb-4 item variant {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
+        <div 
+            class="col mb-4 item variant {{name}} {{compcatmatches}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
             <div class="card h-100">
             <div class="card-body">
                 {{#id}}

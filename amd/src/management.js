@@ -203,16 +203,18 @@ function showItems(e, compcat) {
         element.classList.add('hidden');
     });
 
-    // Show component with compcat name and read the flavors.
+    // Show component and variants with compcat name and read the flavors.
     let itemsShow = document.getElementsByClassName(compcat);
     let usedFlavors = [];
     itemsShow.forEach(element => {
         element.classList.remove('hidden');
-        // Get all flavors to show.
-        let flavors = element.dataset.flavors.split(' ');
-        for (let value of flavors) {
-            if (!usedFlavors.includes(value) && value.length != 0) {
-                usedFlavors.push(value);
+        // Get all flavors to show if on compcat element.
+        if (typeof element.dataset.flavors !== 'undefined') {
+            let flavors = element.dataset.flavors.split(' ');
+            for (let value of flavors) {
+                if (!usedFlavors.includes(value) && value.length != 0) {
+                    usedFlavors.push(value);
+                }
             }
         }
     });
@@ -241,6 +243,29 @@ function showItems(e, compcat) {
         let item = e.target.closest('.compcat');
         item.classList.add('active');
     }
+
+    // Special case, unassigned items, show all items without connection to compcat.
+    if (compcat == 'found-items') {
+        let found = document.querySelector('.compcat[data-compcat="found-items"]');
+        if (found.dataset.loneflavors.length) {
+            let flavorsShow = document.querySelectorAll(found.dataset.loneflavors);
+            flavorsShow.forEach(element => {
+                element.classList.remove('hidden');
+            });
+        }
+        if (found.dataset.lonevariants.length) {
+            let variantsShow = document.querySelectorAll(found.dataset.lonevariants);
+            variantsShow.forEach(element => {
+                element.classList.remove('hidden');
+            });
+        }
+        if (found.dataset.lonecomponents.length) {
+            let componentsShow = document.querySelectorAll(found.dataset.lonecomponents);
+            componentsShow.forEach(element => {
+                element.classList.remove('hidden');
+            });
+        }
+    }
 }
 
 /**
@@ -248,7 +273,7 @@ function showItems(e, compcat) {
  * @param {*} form
  */
 function reloadIfNew(form) {
-    // Newly created element?
+    // Newly created element without id?
     if (!form.elements['id'].value) {
         // Reload page with active compcat.
         const compcat = document.querySelector('.compcat.active');

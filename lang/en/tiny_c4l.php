@@ -67,6 +67,7 @@ $string['export'] = 'Export';
 $string['figure'] = 'Figure';
 $string['files'] = 'Files';
 $string['flavors'] = 'Flavors';
+$string['foundcompcat'] = 'Unassigned Items';
 $string['gradingvalue'] = 'Grading value';
 $string['helper'] = 'Helper';
 $string['helplinktext'] = 'C4L helper';
