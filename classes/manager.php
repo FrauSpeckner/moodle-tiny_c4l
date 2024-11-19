@@ -56,7 +56,7 @@ class manager {
      *
      * @param int $contextid
      */
-    public function __construct(int $contextid = $this->contextid) {
+    public function __construct(int $contextid = SYSCONTEXTID) {
         $this->contextid = $contextid;
     }
 
