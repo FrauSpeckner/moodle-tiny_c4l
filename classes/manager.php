@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  */
 class manager {
     /** @var int $contextid */
-    protected int $contextid = 1;
+    protected int $contextid = SYSCONTEXTID;
     /** @var array All tables to export data from. **/
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',

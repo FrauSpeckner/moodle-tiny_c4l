@@ -130,6 +130,7 @@ abstract class base_form extends dynamic_form {
 
         if ($this->formtype === 'component') {
             if ($oldrecord) {
+                $records = $DB->get_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name], 'flavorname, iconurl');
                 $DB->delete_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name]);
             }
             if (count($formdata->flavors) > 0) {
@@ -137,6 +138,7 @@ abstract class base_form extends dynamic_form {
                     $DB->insert_record('tiny_c4l_comp_flavor', [
                         'componentname' => $formdata->name,
                         'flavorname' => $flavor,
+                        'iconurl' => $records[$flavor]->iconurl ?? '',
                     ]);
                 }
             }
