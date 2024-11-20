@@ -145,11 +145,13 @@ abstract class base_form extends dynamic_form {
         // Purge CSS to show new one.
         if (($newrecord && !(empty($formdata->css) && empty($formdata->iconurl)) || ($oldrecord->css != $formdata->css) || ($oldrecord->iconurl != $formdata->iconurl))) {
             \tiny_c4l\local\utils::purge_css_cache();
+            \tiny_c4l\local\utils::rebuild_css_cache();
         }
 
         // Purge JS to show new one.
         if (($newrecord && !empty($formdata->js)) || ($oldrecord->js != $formdata->js)) {
             \tiny_c4l\local\utils::purge_js_cache();
+            \tiny_c4l\local\utils::rebuild_js_cache();
         }
 
         return [

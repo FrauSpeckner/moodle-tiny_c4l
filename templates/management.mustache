@@ -74,137 +74,146 @@
     }
 }}
 
-<div class="row">
-    <div class="col mb-2">
-        <a href="{{exportlink}}" class="btn btn-primary"> {{#str}} export, tiny_c4l {{/str}}</a>
-        <a href="#" id="c4l_import" class="ml-2 btn btn-primary"> {{#str}} import, tiny_c4l {{/str}}</a>
+<div class="container-fluid">
+    <div class="row row-cols-1 mb-2">
+        <div class="col">
+            <a href="{{exportlink}}" class="btn btn-primary"> {{#str}} export, tiny_c4l {{/str}}</a>
+            <a href="#" id="c4l_import" class="ml-2 btn btn-primary"> {{#str}} import, tiny_c4l {{/str}}</a>            
+        </div>
     </div>
-</div>
-<h2>{{#str}} compcat, tiny_c4l {{/str}}</h2>
-<div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
-    {{#compcats}}
-        <div 
-            class="col mb-4 item compcat" data-compcat="{{name}}"
-            data-loneflavors="{{loneflavors}}" data-lonevariants="{{lonevariants}}" data-lonecomponents="{{lonecomponents}}"
-        >
-            <div class="card h-100">
-            <div class="card-body">
-                {{#id}}
-                    <h5 class="card-title">{{displayname}}</h5>
-                    <a class="edit" href="#" data-id={{id}} data-table="compcat">
-                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
-                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="compcat">
-                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                    </a>
-                {{/id}}
-                {{^id}}
-                    <a class="add" href="#" data-id=0 data-table="compcat">
-                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
-                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
-                    </a>
-                {{/id}}
-            </div>
-            </div>
-        </div>
-    {{/compcats}}
-</div>
 
-<h2>{{#str}} flavors, tiny_c4l {{/str}}</h2>
-<div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
-    {{#flavor}}
-        <div class="col mb-4 item flavor {{name}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
-            <div class="card h-100">
-            <div class="card-body">
-                {{#id}}
-                    <div>
-                        <div class="management preview">
-                            <div class="c4l-{{example}}-icon {{name}}">
-                                <div class="c4l-button-text"></div>
+    <h2>{{#str}} compcat, tiny_c4l {{/str}}</h2>
+    <div class="row row-cols-8">
+        {{#compcats}}
+            <div 
+                class="col mb-4 item compcat" data-compcat="{{name}}"
+                data-loneflavors="{{loneflavors}}" data-lonevariants="{{lonevariants}}" data-lonecomponents="{{lonecomponents}}"
+            >
+                <div class="card h-100">
+                    <div class="card-body">
+                        {{#id}}
+                            <h5 class="card-title">{{displayname}}</h5>
+                            <div class="mt-auto">
+                                <a class="edit" href="#" data-id={{id}} data-table="compcat">
+                                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="compcat">
+                                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                                </a>
                             </div>
-                        </div>
-                        <h5 class="card-title">{{displayname}}</h5>
+                        {{/id}}
+                        {{^id}}
+                                <a class="add" href="#" data-id=0 data-table="compcat">
+                                    <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                                    {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                                </a>
+                        {{/id}}
                     </div>
-                    <a class="edit" href="#" data-id={{id}} data-table="flavor">
-                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
-                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="flavor">
-                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                    </a>
-                {{/id}}
-                {{^id}}
-                    <a class="add" href="#" data-id=0 data-table="flavor">
-                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
-                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
-                    </a>
-                {{/id}}
+                </div>
             </div>
-            </div>
-        </div>
-    {{/flavor}}
-</div>
+        {{/compcats}}
+    </div>
 
-<h2>{{#str}} components, tiny_c4l {{/str}}</h2>
-<div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
-    {{#component}}
-        <div class="col mb-4 item component {{compcatname}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}" data-flavors="{{#flavorsarr}}{{.}} {{/flavorsarr}}">
-            <div class="card h-100">
-            <div class="card-body">
-                {{#id}}
-                    <div>
-                        <div class="management preview">
-                            {{#exampleflavorsarr}}
-                                <div class="c4l-{{name}}-icon {{.}}">
+    <h2>{{#str}} flavors, tiny_c4l {{/str}}</h2>
+    <div class="row row-cols-12">
+        {{#flavor}}
+            <div class="col mb-4 item flavor {{name}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
+                <div class="card h-100">
+                <div class="card-body">
+                    {{#id}}
+                        <div>
+                            <div class="management preview">
+                                <div class="c4l-{{example}}-icon {{name}}">
                                     <div class="c4l-button-text"></div>
                                 </div>
-                            {{/exampleflavorsarr}}
+                            </div>
+                            <h5 class="card-title">{{displayname}}</h5>
                         </div>
-                        <h5 class="card-title">{{displayname}}</h5>
-                    </div>
-                    <a class="edit" href="#" data-id={{id}} data-table="component">
-                        {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
-                    <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="component">
-                        {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                    </a>
-                {{/id}}
-                {{^id}}
-                    <a class="add" href="#" data-id=0 data-table="component">
-                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
-                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
-                    </a>
-                {{/id}}
-            </div>
-            </div>
-        </div>
-    {{/component}}
-</div>
-
-<h2>{{#str}} variants, tiny_c4l {{/str}}</h2>
-<div class="row row-cols-1 row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-xs-2">
-    {{#variant}}
-        <div 
-            class="col mb-4 item variant {{name}} {{compcatmatches}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
-            <div class="card h-100">
-            <div class="card-body">
-                {{#id}}
-                    <div>
-                        <h5 class="card-title">{{displayname}}</h5>
-                        <a class="edit" href="#" data-id={{id}} data-table="variant">
-                            {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
-                        <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
-                            {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                        <div class="mt-auto">
+                            <a class="edit" href="#" data-id={{id}} data-table="flavor">
+                                {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                            <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="flavor">
+                                {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                            </a>
+                        </div>
+                    {{/id}}
+                    {{^id}}
+                        <a class="add" href="#" data-id=0 data-table="flavor">
+                            <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                            {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
                         </a>
-                    </div>
-                {{/id}}
-                {{^id}}
-                    <a class="add" href="#" data-id=0 data-table="variant">
-                        <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
-                        {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
-                    </a>
-                {{/id}}
+                    {{/id}}
+                </div>
+                </div>
             </div>
-            </div>
-        </div>
-    {{/variant}}
-</div>
+        {{/flavor}}
+    </div>
 
-<h2>{{#str}} compflavor_icons, tiny_c4l {{/str}}</h2>
-<button id="c4l_compflavor_button" class="btn btn-primary">{{#str}} edit {{/str}}</button>
+    <h2>{{#str}} components, tiny_c4l {{/str}} <button id="c4l_compflavor_button" class="ml-2 btn btn-secondary">{{#str}} compflavor_icons, tiny_c4l {{/str}}</button></h2>
+    
+    <div class="row row-cols-12">
+        {{#component}}
+            <div class="col mb-4 item component {{compcatname}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}" data-flavors="{{#flavorsarr}}{{.}} {{/flavorsarr}}">
+                <div class="card h-100">
+                <div class="card-body">
+                    {{#id}}
+                        <div>
+                            <div class="management preview">
+                                {{#exampleflavorsarr}}
+                                    <div class="c4l-{{name}}-icon {{.}}">
+                                        <div class="c4l-button-text"></div>
+                                    </div>
+                                {{/exampleflavorsarr}}
+                            </div>
+                            <h5 class="card-title">{{displayname}}</h5>
+                        </div>
+                        <div class="mt-auto">
+                            <a class="edit" href="#" data-id={{id}} data-table="component">
+                                {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                            <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="component">
+                                {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                            </a>
+                        </div>
+                    {{/id}}
+                    {{^id}}
+                        <a class="add" href="#" data-id=0 data-table="component">
+                            <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                            {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                        </a>
+                    {{/id}}
+                </div>
+                </div>
+            </div>
+        {{/component}}
+    </div>
+
+    <h2>{{#str}} variants, tiny_c4l {{/str}}</h2>
+    <div class="row row-cols-12">
+        {{#variant}}
+            <div 
+                class="col mb-4 item variant {{name}} {{compcatmatches}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}">
+                <div class="card h-100">
+                <div class="card-body">
+                    {{#id}}
+                        <div>
+                            <h5 class="card-title">{{displayname}}</h5>
+                            <div class="mt-auto">
+                                <a class="edit" href="#" data-id={{id}} data-table="variant">
+                                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
+                                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                                </a>
+                            </div>
+                        </div>
+                    {{/id}}
+                    {{^id}}
+                        <a class="add" href="#" data-id=0 data-table="variant">
+                            <h5 class="card-title">{{#str}} additem, tiny_c4l {{/str}}</h5>
+                            {{#pix}} t/add, core, {{#str}} add {{/str}}{{/pix}}</a>
+                        </a>
+                    {{/id}}
+                </div>
+                </div>
+            </div>
+        {{/variant}}
+    </div>
+</div>

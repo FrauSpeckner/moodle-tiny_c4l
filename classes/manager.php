@@ -431,6 +431,9 @@ class manager {
             $fs->delete_area_files($this->contextid, 'tiny_c4l', 'import', $draftitemid);
 
             \tiny_c4l\local\utils::purge_css_cache();
+            \tiny_c4l\local\utils::rebuild_css_cache();
+            \tiny_c4l\local\utils::purge_js_cache();
+            \tiny_c4l\local\utils::rebuild_js_cache();
         }
     }
 }
