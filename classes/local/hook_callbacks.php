@@ -51,10 +51,10 @@ class hook_callbacks {
         }
 
         // Don't run if we are in the management page. This should help to remove invalid css/js.
-        // if ($beforehttpheadershook->renderer->get_page()->has_set_url() &&
-        //     $beforehttpheadershook->renderer->get_page()->url->get_path() == '/lib/editor/tiny/plugins/c4l/management.php') {
-        //     return;
-        // }
+        if ($beforehttpheadershook->renderer->get_page()->has_set_url() &&
+            $beforehttpheadershook->renderer->get_page()->url->get_path() == '/lib/editor/tiny/plugins/c4l/management.php') {
+            return;
+        }
 
         $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);
         $rev = $cache->get(utils::TINY_C4L_CSS_CACHE_REV);

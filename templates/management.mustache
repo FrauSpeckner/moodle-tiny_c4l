@@ -86,7 +86,7 @@
     <div class="row row-cols-8">
         {{#compcats}}
             <div 
-                class="col mb-4 item compcat" data-compcat="{{name}}"
+                class="col mb-4 item compcat {{^id}}addcontainer{{/id}}" data-compcat="{{name}}"
                 data-loneflavors="{{loneflavors}}" data-lonevariants="{{lonevariants}}" data-lonecomponents="{{lonecomponents}}"
             >
                 <div class="card h-100">
@@ -122,9 +122,7 @@
                     {{#id}}
                         <div>
                             <div class="management preview">
-                                <div class="c4l-{{example}}-icon {{name}}">
-                                    <div class="c4l-button-text"></div>
-                                </div>
+                                <img src="{{example}}">
                             </div>
                             <h5 class="card-title">{{displayname}}</h5>
                         </div>
@@ -148,7 +146,13 @@
         {{/flavor}}
     </div>
 
-    <h2>{{#str}} components, tiny_c4l {{/str}} <button id="c4l_compflavor_button" class="ml-2 btn btn-secondary">{{#str}} compflavor_icons, tiny_c4l {{/str}}</button></h2>
+    <div class="row">
+        <div class="col mb-4"> 
+            <button id="c4l_compflavor_button" class="btn btn-secondary">{{#str}} compflavor_icons, tiny_c4l {{/str}}</button>
+        </div>
+    </div>
+    
+    <h2>{{#str}} components, tiny_c4l {{/str}} </h2>
     
     <div class="row row-cols-12">
         {{#component}}
@@ -158,11 +162,9 @@
                     {{#id}}
                         <div>
                             <div class="management preview">
-                                {{#exampleflavorsarr}}
-                                    <div class="c4l-{{name}}-icon {{.}}">
-                                        <div class="c4l-button-text"></div>
-                                    </div>
-                                {{/exampleflavorsarr}}
+                                {{#flavorexamplesarr}}
+                                    <img src="{{.}}">
+                                {{/flavorexamplesarr}}
                             </div>
                             <h5 class="card-title">{{displayname}}</h5>
                         </div>

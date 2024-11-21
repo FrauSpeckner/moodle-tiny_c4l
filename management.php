@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tiny_c4l\local\utils;
+
 require('../../../../../config.php');
 
 require_login();
@@ -102,36 +104,39 @@ foreach ($variant as $key => $value) {
         $variant[$key]->compcatmatches = implode(' ', $fcompcats);
     }
 }
-
-// Build preview images for management.
-$flavorexamples = [];
+// Build component preview images for management, also add compcat.
 foreach ($component as $key => $value) {
-    // Build a additional array with flavors for mustache.
-    $flavors = [];
+    // Add corresponding flavors.
+    $flavorsarr = [];
+    $flavorexamplesarr = [];
     foreach ($dbcompflavor as $val) {
         if ($val->componentname == $value->name) {
-            array_push($flavors, $val->flavorname);
+            array_push($flavorsarr, $val->flavorname);
+            if (!empty($val->iconurl)) {
+                array_push($flavorexamplesarr, utils::replace_pluginfile_urls($val->iconurl, true));
+            }
         }
     }
-    $component[$key]->flavorsarr = $flavors;
-    $component[$key]->exampleflavorsarr = $component[$key]->flavorsarr;
-    if (count($component[$key]->flavorsarr) > 2) {
-        // Keep only the first two entries, and add ...
-        $component[$key]->exampleflavorsarr = array_slice($component[$key]->flavorsarr, 0, 2);
-        array_push($component[$key]->exampleflavorsarr, 'more');
+    $component[$key]->flavorsarr = $flavorsarr;
+    $component[$key]->flavorexamplesarr = $flavorexamplesarr;
+    // Keep only the first two entries
+    if (count($component[$key]->flavorexamplesarr) > 2) {
+        $component[$key]->flavorexamplesarr = array_slice($component[$key]->flavorexamplesarr, 0, 2);
     }
-    // Save an example to show on a flavor.
-    foreach ($component[$key]->flavorsarr as $flav) {
-        $flavorexamples[$flav] = $component[$key]->name;
-    }
-    // Add the compcat name as js selector, use database array.
+    // Add the compcat name as js selector.
     $component[$key]->compcatname = $dbcompcats[$value->compcat]->name;
 }
 
-// Use flavorexamples to add an example image to flavors.
+// Add flavor previews.
 foreach ($flavor as $key => $value) {
-    if (isset($flavorexamples[$value->name])) {
-        $flavor[$key]->example = $flavorexamples[$value->name];
+    // Look for an example in comp_flavor.
+    foreach ($dbcompflavor as $val) {
+        if ($val->flavorname == $value->name) {
+            if (!empty($val->iconurl)) {
+                $flavor[$key]->example = utils::replace_pluginfile_urls($val->iconurl, true);
+                continue;
+            }
+        }
     }
 }
 
