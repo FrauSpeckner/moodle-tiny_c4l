@@ -120,7 +120,7 @@
                 <div class="card h-100">
                 <div class="card-body">
                     {{#id}}
-                        <div>
+                        <div class="clickingextended">
                             <div class="management preview">
                                 <img src="{{example}}">
                             </div>
@@ -153,14 +153,14 @@
     </div>
     
     <h2>{{#str}} components, tiny_c4l {{/str}} </h2>
-    
+
     <div class="row row-cols-12">
         {{#component}}
             <div class="col mb-4 item component {{compcatname}} {{#id}}hidden{{/id}}{{^id}}addcontainer{{/id}}" data-flavors="{{#flavorsarr}}{{.}} {{/flavorsarr}}">
                 <div class="card h-100">
                 <div class="card-body">
                     {{#id}}
-                        <div>
+                        <div class="clickingextended">
                             <div class="management preview">
                                 {{#flavorexamplesarr}}
                                     <img src="{{.}}">
@@ -168,11 +168,15 @@
                             </div>
                             <h5 class="card-title">{{displayname}}</h5>
                         </div>
-                        <div class="mt-auto">
+                        <div class="d-flex mt-auto">
                             <a class="edit" href="#" data-id={{id}} data-table="component">
-                                {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                                {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}
+                            </a>
                             <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="component">
                                 {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                            </a>
+                            <a class="preview" id="comp_{{name}}" href="#" data-component="{{name}}" data-flavors="{{#flavorsarr}}{{.}} {{/flavorsarr}}">
+                                {{#pix}} t/preview, core, {{#str}} previewcss, tiny_c4l {{/str}}{{/pix}}
                             </a>
                         </div>
                     {{/id}}
@@ -196,7 +200,7 @@
                 <div class="card h-100">
                 <div class="card-body">
                     {{#id}}
-                        <div>
+                        <div class="clickingextended">
                             <h5 class="card-title">{{displayname}}</h5>
                             <div class="mt-auto">
                                 <a class="edit" href="#" data-id={{id}} data-table="variant">

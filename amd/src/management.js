@@ -1,61 +1,79 @@
+import Modal from 'core/modal';
 import ModalForm from 'core_form/modalform';
-import { get_string as getString } from 'core/str';
-import { exception as displayException, deleteCancelPromise } from 'core/notification';
-import { call as fetchMany } from 'core/ajax';
+import {get_string as getString} from 'core/str';
+import {exception as displayException, deleteCancelPromise} from 'core/notification';
+import {call as fetchMany} from 'core/ajax';
 
+class PreviewModal extends Modal {
+    static TYPE = "tiny_c4l/management_preview";
+    static TEMPLATE = "tiny_c4l/management_preview";
+    configure(modalConfig) {
+        modalConfig.removeOnClose = true;
+        modalConfig.large = true;
+        super.configure(modalConfig);
+    }
+}
 
 export const init = async(params) => {
 
-    // Add listener for adding a new source.
-    let addsources = document.getElementsByClassName('add');
-    addsources.forEach(element => {
-        element.addEventListener('click', async (e) => {
-            showModal(e, element.dataset.id, element.dataset.table);
-        });
-    });
-
-    // Add listener to edit sources.
-    let editsources = document.getElementsByClassName('edit');
-    editsources.forEach(element => {
-        element.addEventListener('click', async (e) => {
-            showModal(e, element.dataset.id, element.dataset.table);
-        });
-    });
-
     // Add listener to import xml files.
     let importxml = document.getElementById('c4l_import');
-    importxml.addEventListener('click', async (e) => {
+    importxml.addEventListener('click', async(e) => {
         importModal(e);
     });
 
-    // Add listener to delete sources.
-    let deletesources = document.getElementsByClassName('delete');
-    deletesources.forEach(element => {
-        element.addEventListener('click', async (e) => {
+    // Add listener for adding a new item.
+    let additem = document.getElementsByClassName('add');
+    additem.forEach(element => {
+        element.addEventListener('click', async(e) => {
+            showModal(e, element.dataset.id, element.dataset.table);
+        });
+    });
+
+    // Add listener to edit items.
+    let edititems = document.getElementsByClassName('edit');
+    edititems.forEach(element => {
+        element.addEventListener('click', async(e) => {
+            showModal(e, element.dataset.id, element.dataset.table);
+        });
+    });
+
+    // Add listener to delete items.
+    let deleteitems = document.getElementsByClassName('delete');
+    deleteitems.forEach(element => {
+        element.addEventListener('click', async(e) => {
             deleteModal(e, element.dataset.id, element.dataset.title, element.dataset.table);
+        });
+    });
+
+    // Add listener to preview items.
+    let previewitems = document.getElementsByClassName('preview');
+    previewitems.forEach(element => {
+        element.addEventListener('click', async(e) => {
+            previewModal(e);
         });
     });
 
     // Add listener to select compcat to show corresponding items.
     let compcats = document.getElementsByClassName('compcat');
     compcats.forEach(element => {
-        element.addEventListener('click', async (e) => {
+        element.addEventListener('click', async(e) => {
             showItems(e, element.dataset.compcat);
         });
     });
 
     // Add listener to manage component flavor relation.
     let compflavor = document.getElementById('c4l_compflavor_button');
-    compflavor.addEventListener('click', async (e) => {
+    compflavor.addEventListener('click', async(e) => {
         compflavorModal(e);
     });
 
     // Add image and text to item setting click area.
     let enlargeItems = document.querySelectorAll(
-        '.flavor .card-body > div, .component .card-body > div, .variant .card-body > div'
+        '.flavor .card-body > .clickingextended, .component .card-body > .clickingextended, .variant .card-body > .clickingextended'
     );
     enlargeItems.forEach(element => {
-        element.addEventListener('click', async (e) => {
+        element.addEventListener('click', async(e) => {
             let item = e.target.closest('.item');
             item.querySelector('a.edit').click();
         });
@@ -100,6 +118,21 @@ function showModal(e, id, table) {
     modalForm.show();
 }
 
+/**
+ * Show modal to preview css version.
+ * @param {*} e
+ */
+async function previewModal(e) {
+    e.preventDefault();
+    let preview = e.target.closest(".preview");
+    const modal = await PreviewModal.create({
+        templateContext: {
+            component: preview.dataset.component,
+            flavors: preview.dataset.flavors.trim().split(" "),
+        },
+    });
+    modal.show();
+}
 
 /**
  * Show dynamic form to import xml backups.
