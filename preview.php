@@ -37,9 +37,22 @@ echo $OUTPUT->header();
 $component  = required_param('component', PARAM_ALPHANUMEXT);
 $flavor  = required_param('flavor', PARAM_ALPHANUMEXT);
 
-echo $OUTPUT->render_from_template(
-    'tiny_c4l/management_preview_content',
-    ['component' => $component, 'flavor' => $flavor]
-);
+$componentdata = $DB->get_record('tiny_c4l_component', ['name' => $component]);
+$categorydata = $DB->get_record('tiny_c4l_compcat', ['id' => $componentdata->compcat]);
+$flavordata = $DB->get_record('tiny_c4l_flavor', ['name' => $flavor], );
+
+$variant = '';
+$varianthtml = '';
+$componentdata->code = str_replace('{{CATEGORY}}', $categorydata->name, $componentdata->code);
+$componentdata->code = str_replace('{{COMPONENT}}', $component, $componentdata->code);
+$componentdata->code = str_replace('{{VARIANTS}}', $variant, $componentdata->code);
+$componentdata->code = str_replace('{{VARIANTSHTML}}', $varianthtml, $componentdata->code);
+$componentdata->code = str_replace('{{PLACEHOLDER}}', $componentdata->text ?? 'Lorem ipsum', $componentdata->code);
+
+if (empty($flavordata)) {
+    echo str_replace('{{FLAVOR}}', '', $componentdata->code);
+} else {
+    echo str_replace('{{FLAVOR}}', $flavordata->name, $componentdata->code);
+}
 
 echo $OUTPUT->footer();
