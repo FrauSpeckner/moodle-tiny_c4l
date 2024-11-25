@@ -129,6 +129,7 @@ async function previewModal(e) {
         templateContext: {
             component: preview.dataset.component,
             flavors: preview.dataset.flavors.trim().split(" "),
+            config: M.cfg,
         },
     });
     modal.show();
