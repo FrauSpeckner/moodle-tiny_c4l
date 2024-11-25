@@ -41,3 +41,5 @@ echo $OUTPUT->render_from_template(
     'tiny_c4l/management_preview_content',
     ['component' => $component, 'flavor' => $flavor]
 );
+
+echo $OUTPUT->footer();
