@@ -98,6 +98,11 @@ abstract class base_form extends dynamic_form {
             $formdata->variants = implode(',', $formdata->variants);
         }
 
+        if (($this->formtype == 'flavor' || $this->formtype == 'component')
+            && !isset($formdata->hideforpupils)) {
+                $formdata->hideforpupils = 0;
+        }
+
         $formdata->timemodified = time();
         $newrecord = empty($formdata->id);
 
@@ -145,7 +150,10 @@ abstract class base_form extends dynamic_form {
         }
 
         // Purge CSS to show new one.
-        if (($newrecord && !(empty($formdata->css) && empty($formdata->iconurl)) || ($oldrecord->css != $formdata->css) || ($oldrecord->iconurl != $formdata->iconurl))) {
+        if (($newrecord && !(empty($formdata->css) && empty($formdata->iconurl)))
+            || ($oldrecord->css != $formdata->css)
+            || ($oldrecord->iconurl != $formdata->iconurl)
+            || (isset($oldrecord->hideforpupils) && $oldrecord->hideforpupils != $formdata->hideforpupils)) {
             \tiny_c4l\local\utils::purge_css_cache();
             \tiny_c4l\local\utils::rebuild_css_cache();
         }

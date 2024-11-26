@@ -170,10 +170,13 @@ class utils {
         $componentcssentries = [];
         $variantscssentries = [];
         $components = [];
+        $componentshideforpupils = [];
+        $flavorshideforpupils = [];
         $variants = [];
         try {
-            $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl');
+            $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl, hideforpupils');
             $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
+            $flavors = $DB->get_records('tiny_c4l_flavor', null, 'id, name, hideforpupils');
             $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
             $variants = $DB->get_records('tiny_c4l_variant', null, '', 'name, iconurl, css');
         } catch (\dml_exception $e) {
@@ -196,13 +199,29 @@ class utils {
             $iconcssentries[] .= self::button_icon_css($componentflavor->componentname, self::replace_pluginfile_urls($componentflavor->iconurl, true), $componentflavor->flavorname);
         }
         foreach ($components as $component) {
+            if ($component->hideforpupils) {
+                $componentshideforpupils[] .= self::hide_item_css($component->name, 'component');
+            }
             $componentcssentries[] = $component->css;
             if (empty($component->iconurl)) {
                 continue;
             }
             $iconcssentries[] .= self::button_icon_css($component->name, self::replace_pluginfile_urls($component->iconurl, true));
         }
-        $cssentries = array_merge($categorycssentries, $componentcssentries, $flavorcssentries, $variantscssentries, $iconcssentries);
+        foreach ($flavors as $flavor) {
+            if ($flavor->hideforpupils) {
+                $flavorshideforpupils[] .= self::hide_item_css($flavor->name, 'flavor');
+            }
+        }
+        $cssentries = array_merge(
+            $categorycssentries,
+            $componentcssentries,
+            $flavorcssentries,
+            $variantscssentries,
+            $iconcssentries,
+            $componentshideforpupils,
+            $flavorshideforpupils,
+        );
         $css = array_reduce(
             $cssentries,
             fn($current, $add) => $current . PHP_EOL . $add,
@@ -326,5 +345,32 @@ class utils {
             content: url('{$iconurl}');
         }
         CSS;
+    }
+
+    /**
+     * Get the css to hide for pupils.
+     *
+     * @param string $name
+     * @param string $type
+     * @return string
+     */
+    public static function hide_item_css(string $name, string $type): string {
+        if ($type == 'component') {
+            return <<<CSS
+            body.tiny_c4l_h4s .c4l-buttons-preview button[class^='c4l-{$name}-icon'],
+            body.tiny_c4l_h4s .c4l-buttons-preview button[class*='c4l-{$name}-icon'] {
+                display: none;
+            }
+            CSS;
+        } else if ($type == 'flavor') {
+            return <<<CSS
+            body.tiny_c4l_h4s .c4l-buttons-flavors button[data-flavor='{$name}'] {
+                display: none;
+            }
+            body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='{$name}'] {
+                display: none;
+            }
+            CSS;
+        }
     }
 }

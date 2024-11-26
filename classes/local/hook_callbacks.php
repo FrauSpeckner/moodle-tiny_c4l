@@ -35,6 +35,8 @@ class hook_callbacks {
      * @param before_http_headers $beforehttpheadershook
      */
     public static function add_c4l_data_to_dom(\core\hook\output\before_http_headers $beforehttpheadershook): void {
+        global $PAGE;
+
         // Parameter to disable css delivery.
         if (optional_param('tiny_c4l_disable', false, PARAM_BOOL)) {
             return;
@@ -54,6 +56,11 @@ class hook_callbacks {
         if ($beforehttpheadershook->renderer->get_page()->has_set_url() &&
             $beforehttpheadershook->renderer->get_page()->url->get_path() == '/lib/editor/tiny/plugins/c4l/management.php') {
             return;
+        }
+
+        // Add body class to hide elements not meant for students.
+        if (!has_capability('tiny/c4l:manage', \context_system::instance())) {
+            $PAGE->add_body_class('tiny_c4l_h4s');
         }
 
         $cache = \cache::make('tiny_c4l', utils::TINY_C4L_CACHE_AREA);

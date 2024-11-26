@@ -53,7 +53,7 @@ final class utils_test extends \advanced_testcase {
         $componentrecord1 = new stdClass();
         $componentrecord1->name = 'component1';
         $componentrecord1->displayname = 'Component 1';
-        ;
+
         $componentrecord1->compcat = $compcatrecord1id;
         $componentrecord1->css = 'body { background-color: red; }';
         $DB->insert_record('tiny_c4l_component', $componentrecord1);
@@ -61,7 +61,7 @@ final class utils_test extends \advanced_testcase {
         $componentrecord2 = new stdClass();
         $componentrecord2->name = 'component2';
         $componentrecord2->displayname = 'Component 2';
-        ;
+
         $componentrecord2->compcat = $compcatrecord2id;
         $componentrecord2->css = 'body { background-color: green; }';
         $DB->insert_record('tiny_c4l_component', $componentrecord2);
@@ -78,14 +78,22 @@ final class utils_test extends \advanced_testcase {
         $flavorrecord2->css = 'body { color: yellow }';
         $DB->insert_record('tiny_c4l_flavor', $flavorrecord2);
 
+        $flavorrecord3 = new stdClass();
+        $flavorrecord3->name = 'flavor3';
+        $flavorrecord3->displayname = 'Flavor 3';
+        $flavorrecord3->css = 'body { color: red }';
+        $flavorrecord3->hideforpupils = 1;
+        $flavorrecord3id = $DB->insert_record('tiny_c4l_flavor', $flavorrecord3);
+
         $starttime = time();
         $this->mock_clock_with_frozen($starttime);
 
         // We need to initially build the cache.
         // This is usually being triggered by the
-        global $OUTPUT;
-        $beforehttpheadershook = new before_http_headers($OUTPUT);
-        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        $mpage = new \moodle_page();
+        $rbase = new \renderer_base($mpage, "/");
+        $beforehttpheadershook = new before_http_headers($rbase);
+        hook_callbacks::add_c4l_data_to_dom($beforehttpheadershook);
 
         $css = utils::get_css_from_cache();
         $this->assertStringContainsString($compcatrecord1->css, $css);
@@ -94,9 +102,11 @@ final class utils_test extends \advanced_testcase {
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord3->css, $css);
+        $this->assertStringContainsString("body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='$flavorrecord3->name']", $css);
 
         $dbreadsbefore = $DB->perf_get_queries();
-        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        hook_callbacks::add_c4l_data_to_dom($beforehttpheadershook);
         $this->assertEquals($dbreadsbefore, $DB->perf_get_queries());
         $this->mock_clock_with_frozen($starttime + 10);
         $css = utils::get_css_from_cache();
@@ -106,16 +116,24 @@ final class utils_test extends \advanced_testcase {
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord3->css, $css);
+        $this->assertStringContainsString(
+            "body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='$flavorrecord3->name']",
+            $css
+        );
 
         $this->mock_clock_with_frozen($starttime + 20);
         $compcatrecord1 = $DB->get_record('tiny_c4l_compcat', ['id' => $compcatrecord1id]);
         $compcatrecord1->css = 'p { color: pink; }';
         $DB->update_record('tiny_c4l_compcat', $compcatrecord1);
+        $flavorrecord3 = $DB->get_record('tiny_c4l_flavor', ['id' => $flavorrecord3id]);
+        $flavorrecord3->hideforpupils = 0;
+        $DB->update_record('tiny_c4l_flavor', $flavorrecord3);
         // This needs to be called from the admin interface whenever there is a change in the configuration.
         utils::purge_css_cache();
         // Now the callback should trigger a cache rebuild.
         $dbreadsbefore = $DB->perf_get_queries();
-        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        hook_callbacks::add_c4l_data_to_dom($beforehttpheadershook);
         $this->assertGreaterThan($dbreadsbefore, $DB->perf_get_queries());
         $css = utils::get_css_from_cache();
         $this->assertStringContainsString($compcatrecord1->css, $css);
@@ -124,12 +142,17 @@ final class utils_test extends \advanced_testcase {
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord3->css, $css);
+        $this->assertStringNotContainsString(
+            "body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='$flavorrecord3->name']",
+            $css
+        );
 
         // Check if it also works if we purge all the caches of moodle.
         purge_all_caches();
         // If we purge the moodle caches the hook callback should trigger a cache rebuild.
         $dbreadsbefore = $DB->perf_get_queries();
-        hook_callbacks::add_c4l_stylesheet_to_dom($beforehttpheadershook);
+        hook_callbacks::add_c4l_data_to_dom($beforehttpheadershook);
         $this->assertGreaterThan($dbreadsbefore, $DB->perf_get_queries());
         $this->mock_clock_with_frozen($starttime + 30);
         $css = utils::get_css_from_cache();
@@ -139,5 +162,10 @@ final class utils_test extends \advanced_testcase {
         $this->assertStringContainsString($componentrecord2->css, $css);
         $this->assertStringContainsString($flavorrecord1->css, $css);
         $this->assertStringContainsString($flavorrecord2->css, $css);
+        $this->assertStringContainsString($flavorrecord3->css, $css);
+        $this->assertStringNotContainsString(
+            "body.tiny_c4l_h4s .c4l-buttons-preview button[data-flavor='$flavorrecord3->name']",
+            $css
+        );
     }
 }

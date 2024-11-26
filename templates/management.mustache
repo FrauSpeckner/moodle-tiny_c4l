@@ -202,13 +202,13 @@
                     {{#id}}
                         <div class="clickingextended">
                             <h5 class="card-title">{{displayname}}</h5>
-                            <div class="mt-auto">
-                                <a class="edit" href="#" data-id={{id}} data-table="variant">
-                                    {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
-                                <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
-                                    {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
-                                </a>
-                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <a class="edit" href="#" data-id={{id}} data-table="variant">
+                                {{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                            <a class="delete" href="#" data-id={{id}} data-title={{displayname}} data-table="variant">
+                                {{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}
+                            </a>
                         </div>
                     {{/id}}
                     {{^id}}

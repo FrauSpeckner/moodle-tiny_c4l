@@ -76,5 +76,8 @@ class management_component_form extends base_form {
 
         $mform->addElement('url', 'iconurl', get_string('iconurl', 'tiny_c4l'), ['size' => '255']);
         $mform->setType('iconurl', PARAM_URL);
+
+        $mform->addElement('checkbox', 'hideforpupils', get_string('hideforpupils', 'tiny_c4l'));
+        $mform->setType('hideforpupils', PARAM_INT);
     }
 }
