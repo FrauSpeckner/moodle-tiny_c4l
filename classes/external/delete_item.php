@@ -61,10 +61,16 @@ class delete_item extends external_api {
         self::validate_context($systemcontext);
         require_capability('tiny/c4l:manage', $systemcontext);
 
-        if ($table == 'compcat') {
-            manager::delete_compcat($id);
-        } else {
-            $DB->delete_records_select('tiny_c4l_' . $table, 'id = ?', [$id]);
+        switch ($table) {
+            case 'compcat':
+                manager::delete_compcat($id);
+                break;
+            case 'flavor':
+                manager::delete_flavor($id);
+                break;
+            default:
+                $DB->delete_records_select('tiny_c4l_' . $table, 'id = ?', [$id]);
+                break;
         }
 
         return ['result' => true];

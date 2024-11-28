@@ -55,7 +55,8 @@ $variant = array_values($dbvariant);
 // Also already begin formatting as selectors.
 $sqlflavor = "SELECT CONCAT('.', f.name, '.flavor') FROM {tiny_c4l_flavor} f
               LEFT JOIN {tiny_c4l_comp_flavor} cf ON f.name = cf.flavorname
-              WHERE cf.id IS NULL";
+              LEFT JOIN {tiny_c4l_component} c ON cf.componentname = c.name
+              WHERE cf.id IS NULL OR c.id IS NULL";
 $loneflavors = $DB->get_fieldset_sql($sqlflavor);
 $sqlvariant = "SELECT CONCAT('.', v.name, '.variant') FROM {tiny_c4l_variant} v
                 LEFT JOIN {tiny_c4l_component} c ON c.variants IS NOT NULL

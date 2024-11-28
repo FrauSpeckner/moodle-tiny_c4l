@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  */
 class manager {
     /** @var int $contextid */
-    protected int $contextid = SYSCONTEXTID;
+    protected static int $contextid = SYSCONTEXTID;
     /** @var array All tables to export data from. **/
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',
@@ -178,6 +178,12 @@ class manager {
         }
     }
 
+    /**
+     * Import xml
+     *
+     * @param string $xmlcontent
+     * @return boolean
+     */
     public function importxml(string $xmlcontent): bool {
         try {
             $xml = simplexml_load_string($xmlcontent);
@@ -293,7 +299,7 @@ class manager {
 
         if ($record['flavors'] != '') {
             foreach (explode(',', $record['flavors']) as $flavor) {
-                if($flavor == '') {
+                if ($flavor == '') {
                     continue;
                 }
                 $flavorrecord = [
@@ -401,9 +407,25 @@ class manager {
     public static function delete_compcat(int $id): void {
         global $DB;
         $fs = get_file_storage();
-        $fs->delete_area_files($this->contextid, 'tiny_c4l', 'images', $id);
+        $fs->delete_area_files(self::$contextid, 'tiny_c4l', 'images', $id);
         $DB->delete_records('tiny_c4l_compcat', ['id' => $id]);
         $DB->delete_records('tiny_c4l_component', ['compcat' => $id]);
+    }
+
+    /**
+     * Delete a flavor.
+     *
+     * @param int $id
+     */
+    public static function delete_flavor(int $id): void {
+        global $DB;
+        $sql = 'DELETE FROM {tiny_c4l_comp_flavor} cf
+                WHERE flavorname IN (
+                    SELECT name FROM {tiny_c4l_flavor}
+                    WHERE id = ?
+                )';
+        $DB->execute($sql, [$id]);
+        $DB->delete_records('tiny_c4l_flavor', ['id' => $id]);
     }
 
     /**
