@@ -24,6 +24,7 @@
  * @copyright  2024 ISB Bayern
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Execute the plugin upgrade steps from the given old version.
@@ -31,8 +32,11 @@
  * @param int $oldversion
  * @return bool
  */
-function xmldb_tiny_c4l_upgrade($oldversion) {
-    global $DB;
+function xmldb_tiny_c4l_upgrade($oldversion): bool {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot . "/lib/editor/tiny/plugins/c4l/db/upgradelib.php");
+
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2024110500) {
@@ -150,6 +154,15 @@ function xmldb_tiny_c4l_upgrade($oldversion) {
 
         // C4l savepoint reached.
         upgrade_plugin_savepoint(true, 2024110500, 'tiny', 'c4l');
+    }
+
+    if ($oldversion < 2024112500) {
+
+        // Insert junction table component_variant.
+        tiny_c4l_insert_comp_variant();
+
+        // C4l savepoint reached.
+        upgrade_plugin_savepoint(true, 2024112500, 'tiny', 'c4l');
     }
 
     return true;

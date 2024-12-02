@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO describe file management
+ * Management site: create, import and edit components.
  *
  * @package    tiny_c4l
  * @copyright  2024 Tobias Garske, ISB Bayern
@@ -44,6 +44,7 @@ $dbflavor = $DB->get_records('tiny_c4l_flavor');
 $dbcompflavor = $DB->get_records('tiny_c4l_comp_flavor');
 $dbcomponent = $DB->get_records('tiny_c4l_component');
 $dbvariant = $DB->get_records('tiny_c4l_variant');
+$dbcompvariant = $DB->get_records('tiny_c4l_comp_variant');
 
 // Use array_values so mustache can parse it.
 $compcats = array_values($dbcompcats);
@@ -57,16 +58,11 @@ $sqlflavor = "SELECT CONCAT('.', f.name, '.flavor') FROM {tiny_c4l_flavor} f
               LEFT JOIN {tiny_c4l_comp_flavor} cf ON f.name = cf.flavorname
               WHERE cf.id IS NULL";
 $loneflavors = $DB->get_fieldset_sql($sqlflavor);
-$sqlvariant = "SELECT CONCAT('.', v.name, '.variant') FROM {tiny_c4l_variant} v
-                LEFT JOIN {tiny_c4l_component} c ON c.variants IS NOT NULL
-                AND TRIM(c.variants) != ''
-                AND (
-                    c.variants = v.name
-                    OR c.variants LIKE CONCAT('%,', v.name, ',%')
-                    OR c.variants LIKE CONCAT(v.name, ',%')
-                    OR c.variants LIKE CONCAT('%,', v.name)
-                )
-                WHERE c.id IS NULL";
+$sqlvariant = "SELECT CONCAT('.', v.name, '.variant') 
+                FROM {tiny_c4l_variant} v 
+                LEFT JOIN {tiny_c4l_comp_variant} cpv 
+                ON v.name = cpv.variant
+                WHERE cpv.id IS NULL";
 $lonevariants = $DB->get_fieldset_sql($sqlvariant);
 $sqlcomponent = "SELECT CONCAT('.', c.name, '.component') FROM {tiny_c4l_component} c
               LEFT JOIN {tiny_c4l_compcat} cc ON c.compcat = cc.id
@@ -87,21 +83,20 @@ if ($loneflavors || $lonevariants || $lonecomponents ) {
 
 // Add matching compcats to variants.
 foreach ($variant as $key => $value) {
-    $fcompcats = [];
-    // Select the components.
-    $sql = "SELECT compcat FROM {tiny_c4l_component}
-            WHERE variants = ?
-            OR variants LIKE CONCAT('%,', ?, ',%')
-            OR variants LIKE CONCAT(?, ',%')
-            OR variants LIKE CONCAT('%,', ?)";
-    $param = [$value->name, $value->name, $value->name, $value->name];
-    $fcomps = $DB->get_fieldset_sql($sql, $param);
-    if (!empty($fcomps)) {
-        $fcomps = array_unique($fcomps);
+    $vcompcats = [];
+    // Select the matching compcats.
+    $sql = "SELECT compcat 
+            FROM {tiny_c4l_component} c
+            JOIN {tiny_c4l_comp_variant} cpv
+            ON c.id = cpv.component
+            WHERE cpv.variant = :variant";
+    $vcomps = $DB->get_fieldset_sql($sql, ['variant' => $value->name]);
+    if (!empty($vcomps)) {
+        $vcomps = array_unique($vcomps);
         // Extract names and write as classes.
-        [$insql, $inparams] = $DB->get_in_or_equal($fcomps);
-        $fcompcats = $DB->get_fieldset_select('tiny_c4l_compcat', 'name', "id $insql", $inparams);
-        $variant[$key]->compcatmatches = implode(' ', $fcompcats);
+        [$insql, $inparams] = $DB->get_in_or_equal($vcomps);
+        $vcompcats = $DB->get_fieldset_select('tiny_c4l_compcat', 'name', "id $insql", $inparams);
+        $variant[$key]->compcatmatches = implode(' ', $vcompcats);
     }
 }
 // Build component preview images for management, also add compcat.

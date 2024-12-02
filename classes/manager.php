@@ -232,6 +232,10 @@ class manager {
             self::import_component_flavor($componentflavor, $componentmap);
         }
 
+        foreach ($data['tiny_c4l_comp_variant'] as $componentvariant) {
+            self::import_component_variant($componentvariant, $componentmap);
+        }
+
         return true;
     }
 
@@ -293,7 +297,7 @@ class manager {
 
         if ($record['flavors'] != '') {
             foreach (explode(',', $record['flavors']) as $flavor) {
-                if($flavor == '') {
+                if ($flavor == '') {
                     continue;
                 }
                 $flavorrecord = [
@@ -301,6 +305,19 @@ class manager {
                     'flavorname' => $flavor,
                 ];
                 $DB->insert_record('tiny_c4l_comp_flavor', $flavorrecord);
+            }
+        }
+
+        if ($record['variants'] != '') {
+            foreach (explode(',', $record['variants']) as $variant) {
+                if ($variant == '') {
+                    continue;
+                }
+                $variantrecord = [
+                    'component' => $record['id'],
+                    'variant' => $variant,
+                ];
+                $DB->insert_record('tiny_c4l_comp_variant', $variantrecord);
             }
         }
 
@@ -377,6 +394,24 @@ class manager {
             $record['id'] = $DB->insert_record('tiny_c4l_comp_flavor', $record);
         }
         return $record['id'];
+    }
+
+    /**
+     * Import a relation between component and variant.
+     *
+     * @param array|object $record
+     * @param array $componentmap
+     * @return int id of the imported relation
+     */
+    public static function import_component_variant(array|object $record, array $componentmap): int {
+        global $DB;
+        $record = (array) $record;
+        $current = $DB->get_record('tiny_c4l_comp_variant', ['component' => $record['component'], 'variant' => $record['variant']]);
+        if (!$current) {
+            $record['id'] = $DB->insert_record('tiny_c4l_comp_variant', $record);
+            return $record['id'];
+        }
+        return $current['id'];
     }
 
     /**
