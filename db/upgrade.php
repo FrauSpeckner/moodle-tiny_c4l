@@ -165,5 +165,53 @@ function xmldb_tiny_c4l_upgrade($oldversion): bool {
         upgrade_plugin_savepoint(true, 2024112500, 'tiny', 'c4l');
     }
 
+    if ($oldversion < 2024120404) {
+        global $DB;
+
+        // Define table tiny_c4l_comp_variant to be created.
+        $table = new xmldb_table('tiny_c4l_comp_variant');
+
+        // Adding fields to table tiny_c4l_comp_variant.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('variant', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table tiny_c4l_comp_variant.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('tinyc4lcompvariant_comp_fk', XMLDB_KEY_FOREIGN, ['component'], 'tiny_c4l_component', ['id']);
+        $table->add_key('tinyc4lcompvariant_variant_fk', XMLDB_KEY_FOREIGN, ['variant'], 'tiny_c4l_variant', ['name']);
+
+        // Conditionally launch create table for tiny_c4l_comp_variant.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+            $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, variants');
+
+            foreach ($components as $component) {
+                $variants = explode(',', $component->variants);
+                foreach ($variants as $variant) {
+                    $variant = trim($variant);
+                    if (empty($variant)) {
+                        continue;
+                    }
+                    $record = new stdClass();
+                    $record->component = $component->id;
+                    $record->variant = $variant;
+                    $DB->insert_record('tiny_c4l_comp_variant', $record);
+                }
+                $DB->update_record('tiny_c4l_component', ['id' => $component->id, 'variants' => '']);
+            }
+            $table = new xmldb_table('tiny_c4l_component');
+            $field = new xmldb_field('lockedlayout');
+
+            // Conditionally launch drop field variants.
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+
+        // C4l savepoint reached.
+        upgrade_plugin_savepoint(true, 2024120404, 'tiny', 'c4l');
+    }
+
     return true;
 }
