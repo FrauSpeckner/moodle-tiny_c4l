@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  */
 class manager {
     /** @var int $contextid */
-    protected static int $contextid = SYSCONTEXTID;
+    protected int $contextid = SYSCONTEXTID;
     /** @var array All tables to export data from. **/
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',
@@ -116,7 +116,7 @@ class manager {
         $xmlwriter->begin_tag('c4l');
 
         // Tiny_c4l_compcat.
-        foreach (static::$tables as $shortname => $table) {
+        foreach (self::$tables as $shortname => $table) {
             // Get columns.
             $columns = $DB->get_columns($table);
 
@@ -125,12 +125,12 @@ class manager {
 
             $xmlwriter->begin_tag($table);
             foreach ($data as $value) {
-                $xmlwriter->begin_tag(static::$item);
+                $xmlwriter->begin_tag(self::$item);
                 foreach ($columns as $column) {
                     $name = $column->name;
                     $xmlwriter->full_tag($name, $value->$name ?? '');
                 }
-                $xmlwriter->end_tag(static::$item);
+                $xmlwriter->end_tag(self::$item);
             }
             $xmlwriter->end_tag($table);
         }
@@ -442,10 +442,10 @@ class manager {
      *
      * @param int $id
      */
-    public static function delete_compcat(int $id): void {
+    public function delete_compcat(int $id): void {
         global $DB;
         $fs = get_file_storage();
-        $fs->delete_area_files(self::$contextid, 'tiny_c4l', 'images', $id);
+        $fs->delete_area_files($this->contextid, 'tiny_c4l', 'images', $id);
         $DB->delete_records('tiny_c4l_compcat', ['id' => $id]);
         $DB->delete_records('tiny_c4l_component', ['compcat' => $id]);
     }
@@ -455,7 +455,7 @@ class manager {
      *
      * @param int $id
      */
-    public static function delete_flavor(int $id): void {
+    public function delete_flavor(int $id): void {
         global $DB;
         $sql = 'DELETE FROM {tiny_c4l_comp_flavor} cf
                 WHERE flavorname IN (
