@@ -82,7 +82,7 @@ final class utils_test extends \advanced_testcase {
         $flavorrecord3->name = 'flavor3';
         $flavorrecord3->displayname = 'Flavor 3';
         $flavorrecord3->css = 'body { color: red }';
-        $flavorrecord3->hideforpupils = 1;
+        $flavorrecord3->hideforstudents = 1;
         $flavorrecord3id = $DB->insert_record('tiny_c4l_flavor', $flavorrecord3);
 
         $starttime = time();
@@ -127,7 +127,7 @@ final class utils_test extends \advanced_testcase {
         $compcatrecord1->css = 'p { color: pink; }';
         $DB->update_record('tiny_c4l_compcat', $compcatrecord1);
         $flavorrecord3 = $DB->get_record('tiny_c4l_flavor', ['id' => $flavorrecord3id]);
-        $flavorrecord3->hideforpupils = 0;
+        $flavorrecord3->hideforstudents = 0;
         $DB->update_record('tiny_c4l_flavor', $flavorrecord3);
         // This needs to be called from the admin interface whenever there is a change in the configuration.
         utils::purge_css_cache();

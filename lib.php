@@ -58,7 +58,7 @@ function tiny_c4l_user_preferences() {
  *
  * @param stdClass $course the course object
  * @param stdClass $cm the course module object
- * @param stdClass $context the context
+ * @param context $context the context
  * @param string $filearea the name of the file area
  * @param array $args extra arguments (itemid, path)
  * @param bool $forcedownload whether or not force download
@@ -76,7 +76,7 @@ function tiny_c4l_pluginfile(
 ): bool {
     // Special case, sending a question bank export.
     if ($filearea === 'export') {
-        require_capability('tiny/c4l:manage', \core\context::instance_by_id($context));
+        require_capability('tiny/c4l:manage', $context);
 
         $manager = new \tiny_c4l\manager();
         send_stored_file($manager->export());

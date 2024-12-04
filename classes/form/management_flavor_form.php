@@ -47,7 +47,7 @@ class management_flavor_form extends base_form {
         $mform->addElement($this->codemirror_present() ? 'editor' : 'textarea', 'css', get_string('css', 'tiny_c4l'));
         $mform->setType('css', PARAM_RAW);
 
-        $mform->addElement('checkbox', 'hideforpupils', get_string('hideforpupils', 'tiny_c4l'));
-        $mform->setType('hideforpupils', PARAM_INT);
+        $mform->addElement('checkbox', 'hideforstudents', get_string('hideforstudents', 'tiny_c4l'));
+        $mform->setType('hideforstudents', PARAM_INT);
     }
 }

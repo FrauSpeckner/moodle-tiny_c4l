@@ -170,13 +170,13 @@ class utils {
         $componentcssentries = [];
         $variantscssentries = [];
         $components = [];
-        $componentshideforpupils = [];
-        $flavorshideforpupils = [];
+        $componentshideforstudents = [];
+        $flavorshideforstudents = [];
         $variants = [];
         try {
-            $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl, hideforpupils');
+            $components = $DB->get_records('tiny_c4l_component', null, '', 'id, name, css, iconurl, hideforstudents');
             $categorycssentries = $DB->get_fieldset('tiny_c4l_compcat', 'css');
-            $flavors = $DB->get_records('tiny_c4l_flavor', null, 'id, name, hideforpupils');
+            $flavors = $DB->get_records('tiny_c4l_flavor', null, 'id, name, hideforstudents');
             $flavorcssentries = $DB->get_fieldset('tiny_c4l_flavor', 'css');
             $variants = $DB->get_records('tiny_c4l_variant', null, '', 'name, iconurl, css');
         } catch (\dml_exception $e) {
@@ -199,8 +199,8 @@ class utils {
             $iconcssentries[] .= self::button_icon_css($componentflavor->componentname, self::replace_pluginfile_urls($componentflavor->iconurl, true), $componentflavor->flavorname);
         }
         foreach ($components as $component) {
-            if ($component->hideforpupils) {
-                $componentshideforpupils[] .= self::hide_item_css($component->name, 'component');
+            if ($component->hideforstudents) {
+                $componentshideforstudents[] .= self::hide_item_css($component->name, 'component');
             }
             $componentcssentries[] = $component->css;
             if (empty($component->iconurl)) {
@@ -209,8 +209,8 @@ class utils {
             $iconcssentries[] .= self::button_icon_css($component->name, self::replace_pluginfile_urls($component->iconurl, true));
         }
         foreach ($flavors as $flavor) {
-            if ($flavor->hideforpupils) {
-                $flavorshideforpupils[] .= self::hide_item_css($flavor->name, 'flavor');
+            if ($flavor->hideforstudents) {
+                $flavorshideforstudents[] .= self::hide_item_css($flavor->name, 'flavor');
             }
         }
         $cssentries = array_merge(
@@ -219,8 +219,8 @@ class utils {
             $flavorcssentries,
             $variantscssentries,
             $iconcssentries,
-            $componentshideforpupils,
-            $flavorshideforpupils,
+            $componentshideforstudents,
+            $flavorshideforstudents,
         );
         $css = array_reduce(
             $cssentries,

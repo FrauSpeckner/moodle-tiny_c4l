@@ -152,11 +152,11 @@ function xmldb_tiny_c4l_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024110500, 'tiny', 'c4l');
     }
 
-    if ($oldversion < 2024112603) {
+    if ($oldversion < 2024120401) {
 
         // Define table tiny_c4l_compcat and field to be added.
         $table = new xmldb_table('tiny_c4l_component');
-        $field = new xmldb_field('hideforpupils', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, null);
+        $field = new xmldb_field('hideforstudents', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, null);
 
         // Conditionally create the field.
         if (!$dbman->field_exists($table, $field)) {
@@ -165,7 +165,7 @@ function xmldb_tiny_c4l_upgrade($oldversion) {
 
         // Define table tiny_c4l_flavor and field to be added.
         $table = new xmldb_table('tiny_c4l_flavor');
-        $field = new xmldb_field('hideforpupils', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, null);
+        $field = new xmldb_field('hideforstudents', XMLDB_TYPE_INTEGER, '1', null, null, null, 0, null);
 
         // Conditionally create the field.
         if (!$dbman->field_exists($table, $field)) {
@@ -173,7 +173,7 @@ function xmldb_tiny_c4l_upgrade($oldversion) {
         }
 
         // C4l savepoint reached.
-        upgrade_plugin_savepoint(true, 2024112603, 'tiny', 'c4l');
+        upgrade_plugin_savepoint(true, 2024120401, 'tiny', 'c4l');
     }
     return true;
 }
