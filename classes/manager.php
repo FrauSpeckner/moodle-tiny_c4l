@@ -46,7 +46,10 @@ class manager {
         'flavor' => 'tiny_c4l_flavor',
         'variant' => 'tiny_c4l_variant',
         'compflavor' => 'tiny_c4l_comp_flavor',
+        'compvariant' => 'tiny_c4l_comp_variant',
     ];
+    /** @var array All tables that are optional. **/
+    protected static $optionaltables = ['tiny_c4l_comp_flavor', 'tiny_c4l_comp_variant'];
 
     /** @var string Item. **/
     protected static $item = 'row';
@@ -198,7 +201,7 @@ class manager {
         $componentmap = [];
 
         foreach (self::$tables as $table) {
-            if (!isset($xml->$table)) {
+            if (!isset($xml->$table) && !in_array($table, self::$optionaltables)) {
                 throw new moodle_exception(get_string('error_import_missing_table', 'tiny_c4l', $table));
             }
         }

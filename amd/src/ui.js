@@ -278,7 +278,7 @@ const handleButtonFlavorClick = (event, modal) => {
                 let variants = getVariantsClass(components[componentButton.dataset.id].name, currentFlavor);
                 let availableVariants = componentButton.querySelectorAll('.c4l-button-variant');
                 availableVariants.forEach((variant) => {
-                    if (variants.indexOf(variant.dataset.variant) != -1) {
+                    if (variants.indexOf('c4l-' + variant.dataset.variant + '-variant') != -1) {
                         updateVariantButtonState(variant, true);
                     } else {
                         updateVariantButtonState(variant, false);
