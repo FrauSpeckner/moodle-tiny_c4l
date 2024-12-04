@@ -94,9 +94,9 @@ abstract class base_form extends dynamic_form {
 
         $formdata = $this->get_data();
 
-        if (is_array($formdata->variants)) {
+        /**if (is_array($formdata->variants)) {
             $formdata->variants = implode(',', $formdata->variants);
-        }
+        } DELETE?*/
 
         if (($this->formtype == 'flavor' || $this->formtype == 'component')
             && !isset($formdata->hideforstudents)) {
@@ -134,6 +134,7 @@ abstract class base_form extends dynamic_form {
         }
 
         if ($this->formtype === 'component') {
+            // Update component flavors.
             if ($oldrecord) {
                 $records = $DB->get_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name], '', 'flavorname, iconurl');
                 $DB->delete_records('tiny_c4l_comp_flavor', ['componentname' => $oldrecord->name]);
@@ -144,6 +145,20 @@ abstract class base_form extends dynamic_form {
                         'componentname' => $formdata->name,
                         'flavorname' => $flavor,
                         'iconurl' => $records[$flavor]->iconurl ?? '',
+                    ]);
+                }
+            }
+
+            // Update component variants.
+            if ($oldrecord) {
+                $records = $DB->get_records('tiny_c4l_comp_variant', ['component' => $oldrecord->id]);
+                $DB->delete_records('tiny_c4l_comp_variant', ['component' => $oldrecord->id]);
+            }
+            if (count($formdata->variants) > 0) {
+                foreach ($formdata->variants as $variant) {
+                    $DB->insert_record('tiny_c4l_comp_variant', [
+                        'component' => $formdata->id,
+                        'variant' => $variant,
                     ]);
                 }
             }

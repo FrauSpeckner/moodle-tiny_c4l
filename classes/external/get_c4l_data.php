@@ -83,7 +83,7 @@ class get_c4l_data extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'the name of the component'),
                     'displayname' => new external_value(PARAM_TEXT, 'the display name of the component'),
                     'compcat' => new external_value(PARAM_INT, 'the id of the component category'),
-                    'imageclass' => new external_value(PARAM_TEXT, 'the image class'),
+                    'imageclass' => new external_value(PARAM_TEXT, 'the image class'),  // not in db table? delete?
                     'code' => new external_value(PARAM_RAW, 'the code'),
                     'text' => new external_value(PARAM_TEXT, 'the text'),
                     'variants' => new external_multiple_structure(new external_value(PARAM_TEXT, 'the variants')),
@@ -98,7 +98,7 @@ class get_c4l_data extends external_api {
                     'displayname' => new external_value(PARAM_TEXT, 'the display name of the flavor'),
                     'content' => new external_value(PARAM_RAW, 'the content'),
                     'categories' => new external_value(PARAM_TEXT, 'the categories'),
-                ], 'a component category')
+                ], 'a component flavor')
             ),
             'variants' => new external_multiple_structure(
                 new external_single_structure([
@@ -106,7 +106,7 @@ class get_c4l_data extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'the name of the variant'),
                     'displayname' => new external_value(PARAM_TEXT, 'the display name of the variant'),
                     'content' => new external_value(PARAM_RAW, 'the content'),
-                ], 'a component category')
+                ], 'a component variant')
             ),
         ]);
     }

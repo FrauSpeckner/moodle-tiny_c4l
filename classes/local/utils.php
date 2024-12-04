@@ -55,12 +55,12 @@ class utils {
                     'name' => $record->name,
                     'displayname' => $record->displayname,
                     'compcat' => $record->compcat,
-                    'imageclass' => $record->imageclass,
+                    'imageclass' => $record->imageclass, // not in db table? delete?
                     'code' => self::replace_pluginfile_urls($record->code, true),
                     'text' => $record->text,
                     'displayorder' => $record->displayorder,
-                    'flavors' => explode(',', $record->flavors),
-                    'variants' => explode(',', $record->variants),
+                    'flavors' => explode(',', $record->flavors), // not in db table? maybe 'flavors' => '';
+                    'variants' => explode(',', $record->variants),  // not in db table?  maybe 'variants' => '';
                     'js' => self::replace_pluginfile_urls($record->js, true),
             ];
         }
@@ -79,6 +79,23 @@ class utils {
             $variant->content = self::replace_pluginfile_urls($variant->content, true);
         }
         return $variants;
+    }
+
+    /**
+     * Get all component variants.
+     * 
+     * @param bool $isstudent
+     * @return array all component variants
+     */
+    public static function get_all_comp_variants(bool $isstudent = false): array {
+        global $DB;
+        $compvariants = $DB->get_records('tiny_c4l_comp_variant', null, '', 'id, component, variant');
+        // Sort all variants to the component. key: component id, value: array of variantsnames.
+        $components = [];
+        foreach ($compvariants as $compvariant) {
+            $components[$compvariant->component] = array_merge([$compvariant->variant], $components[$compvariant->component] ?? []);
+        }
+        return $components;
     }
 
     /**
@@ -135,15 +152,21 @@ class utils {
         $flavors = self::get_all_flavors($isstudent);
         $variants = self::get_all_variants($isstudent);
         $componentflavors = self::get_all_comp_flavors($isstudent);
+        $componentvariants = self::get_all_comp_variants($isstudent);
 
         foreach ($components as $key => $component) {
+            // Add flavors to components structure.
             $components[$key]['flavors'] = $componentflavors[$component['name']] ?? [];
+            // Add categories to flavors.
             foreach ($components[$key]['flavors'] as $flavor) {
                 if (!isset($flavors[$flavor])) {
                     continue;
                 }
                 $flavors[$flavor]->categories[] = $component['compcat'];
             }
+
+            // Add variants to components structure.
+            $components[$key]['variants'] = $componentvariants[$component['id']] ?? [];
         }
 
         foreach ($flavors as $flavor) {
