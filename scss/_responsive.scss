@@ -1,9 +1,6 @@
 /* Media queries */
 
 @media only screen and (min-width: 576px) {
-    .c4l-select-filters {
-        display: none;
-    }
 
     .c4l-buttons-filters, .c4l-buttons-flavors {
         display: flex;
@@ -178,13 +175,8 @@
         max-width: 500px;
     }
 
-    .c4l-buttons-preview {
-        max-height: 314px;
-    }
-
     .c4l-buttons-preview.c4l-no-preview {
         justify-content: center;
-        max-height: 324px;
     }
 
     .c4l-buttons-preview.c4l-no-preview .c4l-buttons-grid {
@@ -198,13 +190,8 @@
     }
 
     .c4l-buttons-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, 116px);
-        grid-template-rows: repeat(auto-fill, 100px);
-        grid-gap: 4px;
-        justify-content: flex-start;
         width: 377px;
-        padding: 3px 0 3px 3px;
+        padding: 4px 0 3px 0;
     }
 
     .c4lt-dialog-button {
@@ -279,7 +266,6 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        height: 300px;
         width: 343px;
         align-items: center;
         justify-content: center;

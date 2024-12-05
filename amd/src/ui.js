@@ -124,24 +124,19 @@ const displayDialogue = async(editor) => {
         handleModalHidden(editor);
     });
 
-    // Event filters listener.
-    const filters = modal.getRoot()[0].querySelectorAll('.c4l-button-filter');
-    filters.forEach(node => {
+    // Event listener for categories without flavors.
+    const categories = modal.getRoot()[0].querySelectorAll('.c4l-category.no-flavors');
+    categories.forEach(node => {
         node.addEventListener('click', (event) => {
-            handleButtonFilterClick(event, modal);
+            handleCategoryClick(event, modal);
         });
     });
 
-    const selectfilter = modal.getRoot()[0].querySelector('.c4l-select-filter');
-    selectfilter.addEventListener('change', (event) => {
-        handleSelectFilterChange(event, modal);
-    });
-
-    // Event flavor selector listener.
-    const flavorbuttons = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor');
-    flavorbuttons.forEach(node => {
+    // Event listener for categories with flavors.
+    const selectCategories = modal.getRoot()[0].querySelectorAll('.c4l-category-flavor');
+    selectCategories.forEach(node => {
         node.addEventListener('click', (event) => {
-            handleButtonFlavorClick(event, modal);
+            handleCategoryFlavorClick(event, modal);
         });
     });
 
@@ -169,11 +164,11 @@ const displayDialogue = async(editor) => {
         });
     });
 
-    if (filters.length > 0) {
+    if (categories.length > 0) {
         let savedCategory = currentCategoryId;
-        filters[0].click();
+        categories[0].click();
         if (savedCategory != 0) {
-            filters.forEach((filter) => {
+            categories.forEach((filter) => {
                 if (filter.dataset.filter == savedCategory) {
                     filter.click();
                 }
@@ -190,26 +185,20 @@ const displayDialogue = async(editor) => {
  * @param {MouseEvent} event The change event
  * @param {obj} modal
  */
-const handleButtonFilterClick = (event, modal) => {
-    const button = event.target.closest('button');
-    currentCategoryId = button.dataset.filter;
+const handleCategoryClick = (event, modal) => {
+    const link = event.target;
+    currentCategoryId = link.dataset.categoryid;
 
-    const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-filters button');
-    buttons.forEach(node => node.classList.remove('c4l-button-filter-enabled'));
-    button.classList.add('c4l-button-filter-enabled');
+    // Remove active from all and set to selected.
+    const links = modal.getRoot()[0].querySelectorAll('.nav-link, .dropdown-item');
+    links.forEach(node => node.classList.remove('active'));
+    link.classList.add('active');
 
     showFlavors(modal, currentCategoryId);
 
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
 
-    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
-};
-
-const handleSelectFilterChange = (event, modal) => {
-    currentCategoryId = event.target.value;
-    showFlavors(modal, currentCategoryId);
-    showCategoryButtons(modal, currentCategoryId);
     clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
 };
 
@@ -229,13 +218,6 @@ const clickFlavor = (modal, flavor = 0) => {
         }
         return;
     }
-
-    let flavorButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
-    flavorButtons.forEach(node => {
-        if (node.dataset.id == flavor) {
-            node.click();
-        }
-    });
 };
 
 const showFlavors = (modal, categoryId) => {
@@ -251,17 +233,21 @@ const showFlavors = (modal, categoryId) => {
     });
 };
 
-const handleButtonFlavorClick = (event, modal) => {
-    const button = event.target.closest('button');
-    currentFlavor = button.dataset.flavor;
-    currentFlavorId = button.dataset.id;
+const handleCategoryFlavorClick = (event, modal) => {
+    const link = event.target;
+    currentFlavor = link.dataset.flavor;
+    currentFlavorId = link.dataset.id;
+    currentCategoryId = link.dataset.categoryid;
     lastFlavor[currentCategoryId] = currentFlavorId;
 
-    const buttons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-flavors button');
-    buttons.forEach(node => node.classList.remove('c4l-button-flavor-enabled'));
-    button.classList.add('c4l-button-flavor-enabled');
-    const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
+    // Remove active from all and set to selected.
+    const links = modal.getRoot()[0].querySelectorAll('.nav-link, .dropdown-item');
+    links.forEach(node => node.classList.remove('active'));
+    link.classList.add('active');
+    const category = modal.getRoot()[0].querySelector('.nav-link[data-categoryid="' + currentCategoryId + '"]');
+    category.classList.add('active');
 
+    const componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
     componentButtons.forEach(componentButton => {
         // Remove previous flavor.
         if (componentButton.dataset.flavor != undefined) {
@@ -473,15 +459,24 @@ const getFilters = async() => {
     //const stringValues = await getStrings(Contexts.map((key) => ({key, component})));
     // Iterate over contexts.
     categories.forEach((category) => {
+        let categoryFlavors = getCategoryFlavors(category.id);
+        let hasFlavors = hasCategoryFlavors(categoryFlavors);
         filters.push({
-            id: category.id,
+            categoryid: category.id,
             name: category.displayname,
             type: category.id,
-            filterClass: category.order === 1 ? 'c4l-button-filter-enabled' : '',
             displayorder: category.displayorder,
+            flavors: categoryFlavors,
+            hasFlavors: hasFlavors,
+            active: '',
         });
     });
+    // Sort by displayorder and set first to active.
     filters.sort((a, b) => a.displayorder - b.displayorder);
+    filters[0].active = 'active';
+    if (filters[0].flavors.length > 0) {
+        filters[0].flavors[0].factive = 'active';
+    }
 
     return filters;
 };
@@ -503,6 +498,24 @@ const getComponentVariants = (component) => {
         }
     });
     return componentVariants;
+};
+
+const getCategoryFlavors = (categoryId) => {
+    const categoryFlavors = [];
+    flavors.forEach(flavor => {
+        if (flavor.categories == categoryId) {
+            categoryFlavors.push({
+                id: flavor.id,
+                name: flavor.name,
+                displayname: flavor.displayname,
+            });
+        }
+    });
+    return categoryFlavors;
+};
+
+const hasCategoryFlavors = (value) => {
+    return Array.isArray(value) && value.length;
 };
 
 /**

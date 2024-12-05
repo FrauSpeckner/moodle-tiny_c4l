@@ -31,9 +31,15 @@
     {
         "elementid": "exampleId",
         "filters" : [
-            {"name": "Contextual"},
-            {"type": "contextual"},
-            {"filterClass": ""}
+            "name": "Contextual",
+            "type": "contextual",
+            categoryid: "category.id",
+            name: "category.displayname",
+            type: "category.id",
+            displayorder: "category.displayorder",
+            flavors: "categoryFlavors",
+            hasFlavors: "hasFlavors",
+            active: ""
         ],
         "buttons": [
           {"id": "randomid"},
@@ -50,27 +56,25 @@
     {{/title}}
     {{$body}}
         <div id="{{elementid}}" class="c4l-plugin-container">
-            <div class="c4l-select-filters">
-                <select class="c4l-select-filter" aria-controls="c4l-buttons-grid">
-                    {{#filters}}
-                        <option value="{{type}}">{{name}}</option>
-                    {{/filters}}
-                </select>
-            </div>
-            <div class="c4l-buttons-filters">
+            <ul class="nav nav-tabs">
                 {{#filters}}
-                    <button class="c4l-button-filter {{filterClass}}" data-id="{{id}}" data-filter="{{type}}" aria-controls="c4l-buttons-grid">
-                            {{name}}
-                    </button>
-                {{/filters}}
-            </div>
-            <div class="c4l-buttons-flavors">
-                {{#flavors}}
-                    <button class="c4l-button-flavor {{flavorClass}}" data-id="{{id}}" data-flavor="{{name}}" aria-controls="c4l-buttons-grid" data-categories="{{categories}}">
-                        {{displayname}}
-                    </button>
-                {{/flavors}}
-            </div>
+                    {{#hasFlavors}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{active}}" data-toggle="dropdown" data-categoryid="{{categoryid}}" href="#" role="button" aria-expanded="false">{{name}}</a>
+                        <div class="dropdown-menu">
+                            {{#flavors}}
+                                <a class="dropdown-item c4l-category-flavor {{flavorClass}} {{factive}}" data-id="{{id}}" data-categoryid="{{categoryid}}" data-flavor="{{name}}" aria-controls="c4l-buttons-grid" data-categories="{{categories}}" href="#">{{displayname}}</a>
+                            {{/flavors}}
+                        </div>
+                    </li>
+                    {{/hasFlavors}}
+                    {{^hasFlavors}}
+                    <li class="nav-item">
+                        <a class="nav-link {{active}} c4l-category no-flavors" data-id="{{id}}" data-categoryid="{{categoryid}}" data-filter="{{type}}" aria-controls="c4l-buttons-grid">{{name}}</a>
+                    </li>
+                    {{/hasFlavors}}
+                {{/filters}}            
+            </ul>
             <div class="c4l-buttons-preview {{^preview}}c4l-no-preview{{/preview}}">
                 <div id="c4l-buttons-grid" class="c4l-buttons-grid">
                     {{#buttons}}

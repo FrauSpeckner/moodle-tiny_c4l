@@ -5,61 +5,44 @@
     padding: 1rem;
     background-color: #f6f7f8;
     border: 1px solid #dee2e6;
+    .nav-tabs,
+    .dropdown-item {
+        font-size: .8rem;
+    }
+    .nav-tabs .nav-link {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+    }
+
 }
 
-.c4l-buttons-filters, .c4l-buttons-flavors {
-    display: none;
-}
+//.c4l-buttons-filters, .c4l-buttons-flavors {
+//    display: none;
+//}
 
-.c4l-select-filters {
-    display: grid;
-    grid-auto-flow: column;
-    width: 100%;
-    margin: 7px 0 36px 0;
-}
-
-.c4l-select-filter {
-    grid-column: 1 / -1;
-    background-color: #fff;
-    border: 1px solid #dfe2e5;
-    border-radius: 7px;
-    padding: 17px;
-    width: 100%;
-    text-transform: capitalize;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background-image: url([[pix:t/dropdown]]);
-    background-repeat: no-repeat;
-    background-position-x: 95%;
-    background-position-y: center;
-}
-
-.c4l-button-filter, .c4l-button-flavor {
+.c4l-tab-filter, .c4l-button-flavor {
     background-color: #fff;
     border: 1px solid #dfe2e5;
     padding: 10px 16px;
     font-weight: 500;
-    font-size: 10.5px;
-    line-height: 12px;
     letter-spacing: 0.05em;
     color: #424b62;
     text-transform: uppercase;
 }
 
-.c4l-button-filter:hover,
+.c4l-tab-filter:hover,
 .c4l-button-flavor:hover,
-.c4l-button-filter.c4l-button-filter-enabled,
+.c4l-tab-filter.c4l-tab-filter-enabled,
 .c4l-button-flavor.c4l-button-flavor-enabled {
     background-color: #e7ebef;
 }
 
-.c4l-button-filter:first-child,
+.c4l-tab-filter:first-child,
 .c4l-button-flavor:first-child {
     border-radius: 6px 0 0 6px;
 }
 
-.c4l-button-filter:last-child,
+.c4l-tab-filter:last-child,
 .c4l-button-flavor:last-child {
     border-radius: 0 6px 6px 0;
 }
@@ -68,11 +51,15 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    max-height: 340px;
+    min-height: 31vh;
+    max-height: 60vh;
 }
 
 .c4l-buttons-grid {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 4px;
     margin-bottom: 0;
     width: 100%;
     overflow-y: auto;
