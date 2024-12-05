@@ -57,13 +57,13 @@
     {{$body}}
         <div id="{{elementid}}" class="c4l-plugin-container">
             <ul class="nav nav-tabs">
-                {{#filters}}
+                {{#categories}}
                     {{#hasFlavors}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{active}}" data-toggle="dropdown" data-categoryid="{{categoryid}}" href="#" role="button" aria-expanded="false">{{name}}</a>
                         <div class="dropdown-menu">
                             {{#flavors}}
-                                <a class="dropdown-item c4l-category-flavor {{flavorClass}} {{factive}}" data-id="{{id}}" data-categoryid="{{categoryid}}" data-flavor="{{name}}" aria-controls="c4l-buttons-grid" data-categories="{{categories}}" href="#">{{displayname}}</a>
+                                <a class="dropdown-item c4l-category-flavor {{flavorClass}} {{factive}}" data-id="{{id}}" data-categoryid="{{categoryid}}" data-flavor="{{name}}" aria-controls="c4l-buttons-grid"  href="#">{{displayname}}</a>
                             {{/flavors}}
                         </div>
                     </li>
@@ -73,7 +73,7 @@
                         <a class="nav-link {{active}} c4l-category no-flavors" data-id="{{id}}" data-categoryid="{{categoryid}}" data-filter="{{type}}" aria-controls="c4l-buttons-grid">{{name}}</a>
                     </li>
                     {{/hasFlavors}}
-                {{/filters}}            
+                {{/categories}}
             </ul>
             <div class="c4l-buttons-preview {{^preview}}c4l-no-preview{{/preview}}">
                 <div id="c4l-buttons-grid" class="c4l-buttons-grid">

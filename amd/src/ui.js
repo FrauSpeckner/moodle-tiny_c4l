@@ -125,8 +125,8 @@ const displayDialogue = async(editor) => {
     });
 
     // Event listener for categories without flavors.
-    const categories = modal.getRoot()[0].querySelectorAll('.c4l-category.no-flavors');
-    categories.forEach(node => {
+    const soleCategories = modal.getRoot()[0].querySelectorAll('.c4l-category.no-flavors');
+    soleCategories.forEach(node => {
         node.addEventListener('click', (event) => {
             handleCategoryClick(event, modal);
         });
@@ -164,19 +164,34 @@ const displayDialogue = async(editor) => {
         });
     });
 
-    if (categories.length > 0) {
+    // Select first or saved category.
+    if (soleCategories.length > 0 || selectCategories.length > 0) {
         let savedCategory = currentCategoryId;
-        categories[0].click();
+        if (soleCategories[0].displayorder > selectCategories[0].displayorder ) {
+            selectCategories[0].click();
+        } else {
+            soleCategories[0].click();
+        }
         if (savedCategory != 0) {
-            categories.forEach((filter) => {
-                if (filter.dataset.filter == savedCategory) {
-                    filter.click();
+            soleCategories.forEach((node) => {
+                if (node.dataset.categoryid == savedCategory) {
+                    node.click();
+                }
+            });
+            selectCategories.forEach((node) => {
+                if (node.dataset.categoryid == savedCategory) {
+                    // Simulate click on flavor.
+                    let target = modal.getRoot()[0].querySelector(
+                        '.c4l-category-flavor[data-id="' + currentFlavorId + '"]',
+                    );
+                    if (target) {
+                        let e = {target: target};
+                        handleCategoryFlavorClick(e, modal);
+                    }
                 }
             });
         }
     }
-
-    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
 };
 
 /**
@@ -194,43 +209,8 @@ const handleCategoryClick = (event, modal) => {
     links.forEach(node => node.classList.remove('active'));
     link.classList.add('active');
 
-    showFlavors(modal, currentCategoryId);
-
     // Show/hide component buttons.
     showCategoryButtons(modal, currentCategoryId);
-
-    clickFlavor(modal, lastFlavor[currentCategoryId] ? lastFlavor[currentCategoryId] : 0);
-};
-
-const clickFlavor = (modal, flavor = 0) => {
-    if (flavor == 0) {
-        let availableFlavors = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor:not(.c4l-hidden)');
-        if (availableFlavors.length > 0) {
-            availableFlavors[0].click();
-        } else {
-            let componentButtons = modal.getRoot()[0].querySelectorAll('.c4l-buttons-preview button');
-            componentButtons.forEach(componentButton => {
-                if (componentButton.dataset.flavor != undefined) {
-                    componentButton.classList.remove(componentButton.dataset.flavor);
-                    componentButton.removeAttribute('data-flavor');
-                }
-            });
-        }
-        return;
-    }
-};
-
-const showFlavors = (modal, categoryId) => {
-    const flavorButtons = modal.getRoot()[0].querySelectorAll('.c4l-button-flavor');
-    flavorButtons.forEach(node => {
-        node.classList.remove('c4l-button-flavor-enabled');
-        let categories = node.dataset.categories.split(',');
-        if (categories.length == 0 || categories.includes(categoryId)) {
-            node.classList.remove('c4l-hidden');
-        } else {
-            node.classList.add('c4l-hidden');
-        }
-    });
 };
 
 const handleCategoryFlavorClick = (event, modal) => {
@@ -285,11 +265,13 @@ const handleCategoryFlavorClick = (event, modal) => {
  */
 const handleModalHidden = (editor) => {
     editor.targetElm.closest('body').classList.remove('c4l-modal-no-preview');
-    savePreferences([
-        {type: Preferences.category, value: currentCategoryId},
-        {type: Preferences.category_flavors, value: JSON.stringify(lastFlavor)},
-        {type: Preferences.component_variants, value: JSON.stringify(getVariantPreferences())}
-    ]);
+    if (currentCategoryId != 0 && currentFlavorId != 0) {
+        savePreferences([
+            {type: Preferences.category, value: currentCategoryId},
+            {type: Preferences.category_flavors, value: JSON.stringify(lastFlavor)},
+            {type: Preferences.component_variants, value: JSON.stringify(getVariantPreferences())}
+        ]);
+    }
 };
 
 const updateComponentCode = (componentCode, selectedButton, placeholder, flavor = '') => {
@@ -332,7 +314,7 @@ const updateComponentCode = (componentCode, selectedButton, placeholder, flavor 
  * @param {obj} editor
  * @param {obj} modal
  */
-const handleButtonClick = async (event, editor, modal) => {
+const handleButtonClick = async(event, editor, modal) => {
     const selectedButton = event.target.closest('button').dataset.id;
 
     // Component button.
@@ -443,25 +425,25 @@ const getTemplateContext = async(editor, data) => {
     return Object.assign({}, {
         elementid: editor.id,
         buttons: await getButtons(editor),
-        filters: await getFilters(),
+        categories: await getCategories(),
         flavors: flavors,
         preview: previewC4L,
     }, data);
 };
 
 /**
- * Get the C4L filters for the dialogue.
+ * Get the C4L categories for the dialogue.
  *
  * @returns {object} data
  */
-const getFilters = async() => {
-    const filters = [];
+const getCategories = async() => {
+    const cats = [];
     //const stringValues = await getStrings(Contexts.map((key) => ({key, component})));
     // Iterate over contexts.
-    categories.forEach((category) => {
+     categories.forEach((category) => {
         let categoryFlavors = getCategoryFlavors(category.id);
         let hasFlavors = hasCategoryFlavors(categoryFlavors);
-        filters.push({
+         cats.push({
             categoryid: category.id,
             name: category.displayname,
             type: category.id,
@@ -472,13 +454,13 @@ const getFilters = async() => {
         });
     });
     // Sort by displayorder and set first to active.
-    filters.sort((a, b) => a.displayorder - b.displayorder);
-    filters[0].active = 'active';
-    if (filters[0].flavors.length > 0) {
-        filters[0].flavors[0].factive = 'active';
+     cats.sort((a, b) => a.displayorder - b.displayorder);
+     cats[0].active = 'active';
+    if (cats[0].flavors.length > 0) {
+         cats[0].flavors[0].factive = 'active';
     }
 
-    return filters;
+    return cats;
 };
 
 const getComponentVariants = (component) => {
@@ -503,7 +485,7 @@ const getComponentVariants = (component) => {
 const getCategoryFlavors = (categoryId) => {
     const categoryFlavors = [];
     flavors.forEach(flavor => {
-        if (flavor.categories == categoryId) {
+        if (flavor.categories == categoryId || flavor.categories.split(',').includes(categoryId)) {
             categoryFlavors.push({
                 id: flavor.id,
                 name: flavor.name,

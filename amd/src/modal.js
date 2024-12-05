@@ -28,6 +28,12 @@ const C4LModal = class extends Modal {
     static TYPE = 'tiny_c4l/modal';
     static TEMPLATE = 'tiny_c4l/modal';
 
+    configure(modalConfig) {
+        // Remove modal from DOM on close.
+        modalConfig.removeOnClose = true;
+        super.configure(modalConfig);
+    }
+
     registerEventListeners() {
         // Call the parent registration.
         super.registerEventListeners();
