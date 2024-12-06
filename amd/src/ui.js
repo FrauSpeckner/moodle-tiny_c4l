@@ -426,7 +426,6 @@ const getTemplateContext = async(editor, data) => {
         elementid: editor.id,
         buttons: await getButtons(editor),
         categories: await getCategories(),
-        flavors: flavors,
         preview: previewC4L,
     }, data);
 };

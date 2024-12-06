@@ -1,26 +1,36 @@
 /* PLUGIN UI STYLES */
 
 .c4l-plugin-container {
-    display: block;
-    padding: 1rem;
-    background-color: #f6f7f8;
-    border: 1px solid #dee2e6;
+    //display: block;
+    .nav.nav-tabs {
+        flex-wrap: wrap-reverse;
+        .nav-item {
+        }
+        .nav-item a.active {
+            background-color: #f6f7f8;
+            border-bottom: 1px solid #f6f7f8;
+        }
+    }
     .nav-tabs,
     .dropdown-item {
         font-size: .8rem;
     }
     .nav-tabs .nav-link {
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
+        border: 1px solid #d3d3d3;
+        border-bottom: none;
+        border-top-right-radius: .2rem;
+        border-top-left-radius: .2rem;
     }
-
+    .c4l-buttons-preview {
+        background-color: #f6f7f8;
+    }
 }
 
 //.c4l-buttons-filters, .c4l-buttons-flavors {
 //    display: none;
 //}
 
-.c4l-tab-filter, .c4l-button-flavor {
+.c4l-button-flavor {
     background-color: #fff;
     border: 1px solid #dfe2e5;
     padding: 10px 16px;
@@ -30,9 +40,7 @@
     text-transform: uppercase;
 }
 
-.c4l-tab-filter:hover,
 .c4l-button-flavor:hover,
-.c4l-tab-filter.c4l-tab-filter-enabled,
 .c4l-button-flavor.c4l-button-flavor-enabled {
     background-color: #e7ebef;
 }
@@ -59,7 +67,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    row-gap: 4px;
+    row-gap: 12px;
     margin-bottom: 0;
     width: 100%;
     overflow-y: auto;
@@ -130,6 +138,7 @@
     display: none;
     overflow: hidden;
     background-color: #fff;
+    border-top: 2px solid #f6f7f8;
 }
 
 .c4l-code-preview .c4l-component-code {
