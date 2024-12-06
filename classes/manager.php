@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/backup/util/xml/output/memory_xml_output.class.ph
  */
 class manager {
     /** @var int $contextid */
-    protected int $contextid = SYSCONTEXTID;
+    protected int $contextid = 1;
     /** @var array All tables to export data from. **/
     protected static $tables = [
         'compcat' => 'tiny_c4l_compcat',
@@ -420,7 +420,7 @@ class manager {
             $record['id'] = $DB->insert_record('tiny_c4l_comp_variant', $record);
             return $record['id'];
         }
-        return $current['id'];
+        return $current->id;
     }
 
     /**
